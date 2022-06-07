@@ -1,17 +1,18 @@
 
 let startTime, previousTimeStamp;
 let done = false
+let callback
 
-function animFrameLoop(timestamp, callback) {
+function animFrameLoop(timestamp) {
   if (startTime === undefined) {
     startTime = timestamp;
     }
-  const dt = timestamp - startTime;
-  callback(dt);
+  callback(timestamp - startTime);
   previousTimeStamp = timestamp
   window.requestAnimationFrame(animFrameLoop);
 }
 
-function startLoop(callback) {
-  window.requestAnimationFrame(animFrameLoop, callback);
+function startLoop(callFunc) {
+  callback = callFunc;
+  window.requestAnimationFrame(animFrameLoop);
 }

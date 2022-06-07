@@ -1,6 +1,7 @@
 
-startLoop(mainLoop);
 
 function mainLoop(dt) {
-  //
+  return;
 }
+
+startLoop(mainLoop);
