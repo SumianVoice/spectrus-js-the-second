@@ -1,7 +1,6 @@
 
 let startTime, previousTimeStamp;
-let done = false
-let callback
+let callback;
 
 function animFrameLoop(timestamp) {
   if (startTime === undefined) {
