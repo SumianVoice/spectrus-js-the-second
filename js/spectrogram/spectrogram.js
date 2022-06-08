@@ -56,15 +56,17 @@ class _spectrogram {
   // draws the spectrogram from data
   draw(data, colormap) {
     if (this.pause) {return "paused"}
-    const speed = Math.max(Math.round(this.speed*dt), 1);
+    const width = Math.max(Math.round(this.speed*dt), 1);
 
-    this.ctx.translate(-speed, 0);
-    // Draw the copied image.
+    // Move the canvas across a bit to scroll
+    this.ctx.translate(-width, 0);
+    // Draw the canvas to the side
     this.ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height,
       0, 0, this.canvas.width, this.canvas.height);
     // Reset the transformation matrix.
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+    // loop through all array position and render each in their proper position
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.toScaleY(i));
       const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
@@ -73,12 +75,20 @@ class _spectrogram {
       }
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
-        this.viewPortRight - speed,
+        this.viewPortRight - width,
         this.viewPortBottom - tmpY,
-        speed,
+        width,
         tmpHeight);
     }
     return null;
+  }
+  drawScale() {
+    if (this.scaleMode === "log") {
+
+    }
+    else if (this.scaleMode === "linear") {
+
+    }
   }
   // takes index and returns its Hz value
   hz(index) {
