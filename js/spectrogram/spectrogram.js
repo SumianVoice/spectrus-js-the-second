@@ -1,15 +1,17 @@
 
 
 class _spectrogram {
-  constructor() {
+  constructor(container=window) {
     // by default creates a spectrogram canvas of the full size of the window
     this.canvas = div.appendChild(document.createElement('canvas'));
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.ctx = canvasUI.getContext('2d');
+    this.canvas.width = container.innerWidth;
+    this.canvas.height = container.innerHeight;
+    this.ctx = this.canvas.getContext('2d');
+    this.pause;
   }
   // draws the spectrogram from data
   draw(data) {
+    if (!this.pause) {return "paused"}
     return null;
   }
   // takes index and returns its Hz value
