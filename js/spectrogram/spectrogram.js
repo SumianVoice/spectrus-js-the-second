@@ -54,7 +54,7 @@ class _spectrogram {
       ${colormap[this.colormap][d][2]*255})`);
   }
   // draws the spectrogram from data
-  draw(data, colormap) {
+  draw(data, timeData, colormap) {
     if (this.pause) {return "paused"}
     const speed = Math.max(Math.round(this.speed*dt), 1);
 
@@ -81,6 +81,12 @@ class _spectrogram {
         speed,
         tmpHeight);
     }
+
+    let pitch = this.toScaleY(getPitch(timeData));
+
+    this.ctx.fillStyle = "rgb(255, 0, 0)";
+    this.ctx.fillRect(this.viewPortRight - speed, this.viewPortBottom - pitch, speed, 1);
+
     return null;
   }
   // takes index and returns its Hz value
