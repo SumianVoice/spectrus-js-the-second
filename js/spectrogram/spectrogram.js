@@ -71,6 +71,9 @@ class _spectrogram {
       if (i===10) {
         gui.renderText(tmpHeight, 200, 30, "#fff", "20px", "Mono");
       }
+
+      if (tmpHeight == 0) continue;
+      
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
         this.viewPortRight - speed,
