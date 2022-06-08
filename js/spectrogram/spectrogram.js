@@ -86,7 +86,8 @@ class _spectrogram {
     clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
     if (this.scaleMode === "log") {
       for (var i = 1; i < this.specMax / 100; i++) {
-        this.ctx.fillRect(this.viewPortRight, yFromHz(i*100));
+        this.ctx.fillStyle = "#777";
+        this.ctx.fillRect(this.viewPortRight, yFromHz(i*100), 20, 1);
       }
       for (var i = 1; i < this.specMax / 50; i++) {
         //
