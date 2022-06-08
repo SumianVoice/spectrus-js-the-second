@@ -85,8 +85,8 @@ class _spectrogram {
   drawScale() {
     clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
     if (this.scaleMode === "log") {
-      for (var i = 1; i < this.specMax / 10; i++) {
-        this.ctx.fillRect(this.viewPortRight, );
+      for (var i = 1; i < this.specMax / 100; i++) {
+        this.ctx.fillRect(this.viewPortRight, yFromHz(i*100));
       }
       for (var i = 1; i < this.specMax / 50; i++) {
         //
