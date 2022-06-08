@@ -69,6 +69,7 @@ class _spectrogram {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     // loop through all array position and render each in their proper position
+    // for the default setting, this does 8000 or so entries
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.toScaleY(i));
       const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
