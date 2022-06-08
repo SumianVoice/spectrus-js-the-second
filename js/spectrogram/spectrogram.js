@@ -31,15 +31,15 @@ class _spectrogram {
       this.clear();
     }
     if (this.scaleMode == 'linear') {
-      this.scaleX = this.canvas.width / this.ahz(this.specMax);
-      this.scaleY = this.canvas.height / this.ahz(this.specMax);
+      this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
+      this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
       this.viewPortRight = this.canvas.width - this.scaleWidth;
       this.viewPortBottom = this.canvas.height;
     }
     else if (this.scaleMode == 'log') {
-      const cutoff = this.getBaseLog(Math.ceil(this.ahz(this.specMin)) + 1);
-      this.scaleX = this.canvas.width / this.getBaseLog(this.ahz(this.specMax), this.logScale);
-      this.scaleY = this.canvas.height / this.getBaseLog(this.ahz(this.specMax), this.logScale);
+      const cutoff = this.getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
+      this.scaleX = this.canvas.width / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
+      this.scaleY = this.canvas.height / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.viewPortRight = this.canvas.width - this.scaleWidth;
       this.viewPortBottom = this.canvas.height;
     }
@@ -71,8 +71,8 @@ class _spectrogram {
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
     for (var i = 1; i < data.length; i++) {
-      const tmpY = Math.floor(this.toScaleY(i));
-      const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
+      const tmpY = Math.floor(this.yFromIndex(i));
+      const tmpHeight = Math.ceil(tmpY - this.yFromIndex(i-1));
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
         this.viewPortRight - width,
@@ -83,19 +83,28 @@ class _spectrogram {
     return null;
   }
   drawScale() {
+    clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
     if (this.scaleMode === "log") {
-      //
+      for (var i = 1; i < this.specMax / 10; i++) {
+        this.ctx.fillRect(this.viewPortRight, );
+      }
+      for (var i = 1; i < this.specMax / 50; i++) {
+        //
+      }
+      for (var i = 1; i < this.specMax / 100; i++) {
+        //
+      }
     }
     else if (this.scaleMode === "linear") {
       //
     }
   }
   // takes index and returns its Hz value
-  hz(index) {
+  hzFromIndex(index) {
     return (index / this.frequencyBinCount) * (this.sampleRate/2);
   }
   // converts hz to array position (float)
-  ahz(hz) {
+  indexFromHz(hz) {
     return (hz / (this.sampleRate/2)) * this.frequencyBinCount;
   }
   //
@@ -107,7 +116,7 @@ class _spectrogram {
      return (base ** answer);
   }
   // takes an index and scales it to its Y coordinate
-  toScaleY(index) {
+  yFromIndex(index) {
     if (this.scaleMode == 'linear') {
       return (index * this.scaleY);
     }
@@ -117,12 +126,15 @@ class _spectrogram {
   }
   // takes a Y value and returns its index in the array
   // undoes scaling
-  unScaleY(y) {
+  indexFromY(y) {
     if (this.scaleMode == 'linear') {
       return y / this.scaleY;
     }
     else if (this.scaleMode == 'log') {
       return this.unBaseLog(y / this.scaleY, this.logScale);
     }
+  }
+  yFromHz(hz) {
+    return yFromIndex(indexFromHz(hz));
   }
 }
