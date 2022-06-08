@@ -23,13 +23,13 @@ class _spectrogram {
   }
   updateScale() {
     if (this.scaleMode == 'linear') {
-      this.scaleX = this.width / this.ahz(this.specMax-this.specMin);
-      this.scaleY = this.height / this.ahz(this.specMax-this.specMin);
+      this.scaleX = this.width / this.ahz(this.specMax);
+      this.scaleY = this.height / this.ahz(this.specMax);
     }
     else if (this.scaleMode == 'log') {
       const cutoff = this.getBaseLog(Math.ceil(this.ahz(this.specMin)) + 1);
-      this.scaleX = this.canvas.width / this.getBaseLog(this.logScale, this.ahz(this.specMax-this.specMin));
-      this.scaleY = this.canvas.height / this.getBaseLog(this.logScale, this.ahz(this.specMax-this.specMin));
+      this.scaleX = this.canvas.width / this.getBaseLog(this.ahz(this.specMax), this.logScale);
+      this.scaleY = this.canvas.height / this.getBaseLog(this.ahz(this.specMax), this.logScale);
     }
   }
   clear() {
