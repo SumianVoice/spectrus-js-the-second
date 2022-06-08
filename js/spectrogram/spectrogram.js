@@ -20,9 +20,14 @@ class _spectrogram {
     this.specMax = 10000;
     this.scaleX = 1;
     this.scaleY = 1;
+    this.speed = 100;
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
+    if ((this.canvas.width !== window.innerWidth) || (this.canvas.height !== window.innerHeight)) {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+    }
     if (this.scaleMode == 'linear') {
       this.scaleX = this.canvas.width / this.ahz(this.specMax);
       this.scaleY = this.canvas.height / this.ahz(this.specMax);
@@ -38,7 +43,8 @@ class _spectrogram {
     }
   }
   clear() {
-    this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
+    this.ctx.fillStyle = this.getColor(0);
+    this.ctx.fillRect(0, 0, this.canvas.width - this.scaleWidth, this.canvas.height);
   }
   getColor(d) {
     if (colormap === undefined) {return `rbg(${d},${d},${d})`}
@@ -50,7 +56,15 @@ class _spectrogram {
   // draws the spectrogram from data
   draw(data, colormap) {
     if (this.pause) {return "paused"}
-    const speed = 500;
+    const speed = Math.max(Math.round(this.speed*dt), 1);
+
+    this.ctx.translate(-speed, 0);
+    // Draw the copied image.
+    this.ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height,
+      0, 0, this.canvas.width, this.canvas.height);
+    // Reset the transformation matrix.
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.toScaleY(i));
       const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
@@ -59,9 +73,9 @@ class _spectrogram {
       }
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
-        this.viewPortRight - speed*dt,
+        this.viewPortRight - speed,
         this.viewPortBottom - tmpY,
-        speed*dt,
+        speed,
         tmpHeight);
     }
     return null;
