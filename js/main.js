@@ -19,7 +19,7 @@ function initialise(stream) {
 function mainLoop(dt) {
   if (dt === 0) { return false } // don't continue if infinite fps
   fft.update();
-  gui.clear() // clear the gui layer
+  gui.clear(); // clear the gui layer
   // show FPS
   gui.renderText(Math.floor(1/dt), 10, 30, "#fff", "20px", "Mono");
   spec.updateScale();

@@ -90,7 +90,16 @@ class _spectrogram {
         tmpY,
         width,
         tmpHeight);
+      if (i===37) { // adds a line to 100hz so we know how badly wrong it is
+        this.ctx.fillStyle = "#fff";
+        this.ctx.fillRect(
+          this.viewPortRight - width,
+          tmpY,
+          width,
+          tmpHeight);
+      }
     }
+    // this.renderText(this.hzFromIndex(37), this.viewPortRight + 80, this.yFromIndex(37) - 5, "#444", "15px");
     return null;
   }
   renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
@@ -125,7 +134,7 @@ class _spectrogram {
       for (var i = 1; i < this.canvas.height / stepCount; i++) {
         this.ctx.fillStyle = "#777";
         this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
+        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px");
       }
       for (var i = 1; i < this.specMax / 100; i++) {
         //
