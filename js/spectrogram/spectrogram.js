@@ -26,13 +26,15 @@ class _spectrogram {
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
+    let reDraw = false;
     if ((this.canvas.width !== window.innerWidth) || (this.canvas.height !== window.innerHeight)) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
-      this.clear();
-      this.drawScale();
+      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortBottom = this.canvas.height;
+      reDraw = true;
     }
     if (this.scaleMode == 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
@@ -46,6 +48,10 @@ class _spectrogram {
       this.scaleY = this.canvas.height / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.viewPortRight = this.canvas.width - this.scaleWidth;
       this.viewPortBottom = this.canvas.height;
+    }
+    if (reDraw) {
+      this.clear();
+      this.drawScale();
     }
   }
   clear() {
@@ -71,6 +77,7 @@ class _spectrogram {
       0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
     // Reset the transformation matrix.
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
 
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
@@ -98,6 +105,7 @@ class _spectrogram {
       let stepCount = 50;
       // do notes on the scale
       let tmpHZ;
+      this.ctx.font = 10 + "px " + "Mono";
       for (var i = 0; i < 12; i++) {
         // A0-A9 note
         tmpHZ = getNoteHz("C"+i);
@@ -105,7 +113,7 @@ class _spectrogram {
         this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 57, 1);
         this.ctx.fillStyle = `#a9f`; // set color
         this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
-        this.ctx.fillStyle = `#a9f`; // set color
+        // this.ctx.fillStyle = `#a9f`; // set color
         this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
       }
       // for (var i = 1; i < Math.floor(this.viewPortBottom / stepCount); i++) {
@@ -113,14 +121,11 @@ class _spectrogram {
       //   this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
       //   this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
       // }
-      this.ctx.fillStyle = "#777";
-      this.ctx.fillRect(this.viewPortRight + 40, this.yFromIndex(37), 20, 1);
-      this.renderText(Math.floor((100)), this.viewPortRight, this.yFromIndex(37) - 5, "#444", "15px")
 
-      for (var i = 1; i < this.specMax / stepCount; i++) {
+      for (var i = 1; i < this.canvas.height / stepCount; i++) {
         this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i*stepCount), 20, 1);
-        this.renderText(Math.floor((i*stepCount)), this.viewPortRight, this.yFromHz(i*stepCount) - 5, "#444", "15px")
+        this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
+        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
       }
       for (var i = 1; i < this.specMax / 100; i++) {
         //
