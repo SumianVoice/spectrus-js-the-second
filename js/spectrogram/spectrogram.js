@@ -1,9 +1,10 @@
 
 
 class _spectrogram {
-  constructor(sampleRate, frequencyBinCount, container=window) {
-    this.sampleRate = sampleRate;
-    this.frequencyBinCount = frequencyBinCount;
+  constructor(fft, container=window) {
+    this.fft = fft;
+    this.sampleRate = fft.audioCtx.sampleRate;
+    this.frequencyBinCount = fft.analyser.fftSize;
     // by default creates a spectrogram canvas of the full size of the window
     this.canvas = div.appendChild(document.createElement('canvas'));
     this.canvas.width = container.innerWidth;
@@ -26,6 +27,8 @@ class _spectrogram {
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     if ((this.canvas.width !== window.innerWidth) || (this.canvas.height !== window.innerHeight)) {
+      this.sampleRate = this.fft.audioCtx.sampleRate;
+      this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
       this.clear();
@@ -95,7 +98,7 @@ class _spectrogram {
       let stepCount = 50;
       // do notes on the scale
       let tmpHZ;
-      for (var i = 0; i < 9; i++) {
+      for (var i = 0; i < 12; i++) {
         // A0-A9 note
         tmpHZ = getNoteHz("C"+i);
         this.ctx.fillStyle = `#aa99ff33`; // set color
@@ -105,13 +108,19 @@ class _spectrogram {
         this.ctx.fillStyle = `#a9f`; // set color
         this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
       }
-      for (var i = 1; i < Math.floor(this.indexFromHz(this.specMax) / stepCount); i++) {
+      // for (var i = 1; i < Math.floor(this.viewPortBottom / stepCount); i++) {
+      //   this.ctx.fillStyle = "#777";
+      //   this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
+      //   this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
+      // }
+      this.ctx.fillStyle = "#777";
+      this.ctx.fillRect(this.viewPortRight + 40, this.yFromIndex(37), 20, 1);
+      this.renderText(Math.floor((100)), this.viewPortRight, this.yFromIndex(37) - 5, "#444", "15px")
+
+      for (var i = 1; i < this.specMax / stepCount; i++) {
         this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
-      }
-      for (var i = 1; i < this.specMax / 50; i++) {
-        //
+        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i*stepCount), 20, 1);
+        this.renderText(Math.floor((i*stepCount)), this.viewPortRight, this.yFromHz(i*stepCount) - 5, "#444", "15px")
       }
       for (var i = 1; i < this.specMax / 100; i++) {
         //

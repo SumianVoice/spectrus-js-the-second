@@ -9,7 +9,7 @@ function initialise(stream) {
   // make the spectrogram
   fft = new _fftData();
   fft.init(stream);
-  spec = new _spectrogram(fft.audioCtx.sampleRate, fft.analyser.fftSize);
+  spec = new _spectrogram(fft);
   spec.updateScale();
   spec.drawScale();
   gui = new _GUI(window);
