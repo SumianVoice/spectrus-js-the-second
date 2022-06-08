@@ -73,9 +73,6 @@ class _spectrogram {
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.toScaleY(i));
       const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
-      if (i===10) {
-        gui.renderText(tmpHeight, 200, 30, "#fff", "20px", "Mono");
-      }
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
         this.viewPortRight - width,
