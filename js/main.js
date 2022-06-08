@@ -10,6 +10,8 @@ function initialise(stream) {
   fft = new _fftData();
   fft.init(stream);
   spec = new _spectrogram(fft.audioCtx.sampleRate, fft.analyser.fftSize);
+  spec.updateScale();
+  spec.drawScale();
   gui = new _GUI(window);
   startLoop(mainLoop);
 }
@@ -21,6 +23,7 @@ function mainLoop(dt) {
   // show FPS
   gui.renderText(Math.floor(1/dt), 10, 30, "#fff", "20px", "Mono");
   spec.updateScale();
+  // spec.drawScale();
   // spec.clear();
   spec.draw(fft.data)
   return;

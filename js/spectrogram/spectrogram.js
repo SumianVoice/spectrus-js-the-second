@@ -15,7 +15,7 @@ class _spectrogram {
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.scaleMode = "log";
-    this.logScale = 1.1;
+    this.logScale = 2;
     this.specMin = 0;
     this.specMax = 10000;
     this.scaleX = 1;
@@ -29,6 +29,7 @@ class _spectrogram {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
       this.clear();
+      this.drawScale();
     }
     if (this.scaleMode == 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
@@ -46,7 +47,7 @@ class _spectrogram {
   }
   clear() {
     this.ctx.fillStyle = this.getColor(0);
-    this.ctx.fillRect(0, 0, this.canvas.width - this.scaleWidth, this.canvas.height);
+    this.ctx.fillRect(0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
   }
   getColor(d) {
     if (colormap === undefined) {return `rbg(${d},${d},${d})`}
@@ -63,8 +64,8 @@ class _spectrogram {
     // Move the canvas across a bit to scroll
     this.ctx.translate(-width, 0);
     // Draw the canvas to the side
-    this.ctx.drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height,
-      0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.drawImage(this.canvas, 0, 0, this.canvas.width-this.scaleWidth, this.canvas.height,
+      0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
     // Reset the transformation matrix.
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -72,22 +73,42 @@ class _spectrogram {
     // for the default setting, this does 8000 or so entries
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.yFromIndex(i));
-      const tmpHeight = Math.ceil(tmpY - this.yFromIndex(i-1));
+      const tmpHeight = tmpY - Math.ceil(this.yFromIndex(i-1));
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
         this.viewPortRight - width,
-        this.viewPortBottom - tmpY,
+        tmpY,
         width,
         tmpHeight);
     }
     return null;
   }
+  renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
+    this.ctx.font = fontsize + " " + font;
+    this.ctx.fillStyle = color;
+    this.ctx.fillText(text, x, y);
+    return true;
+  }
   drawScale() {
-    clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
+    this.ctx.clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
     if (this.scaleMode === "log") {
-      for (var i = 1; i < this.specMax / 100; i++) {
+      let stepCount = 50;
+      // do notes on the scale
+      let tmpHZ;
+      for (var i = 0; i < 9; i++) {
+        // A0-A9 note
+        tmpHZ = getNoteHz("C"+i);
+        this.ctx.fillStyle = `#aa99ff33`; // set color
+        this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 57, 1);
+        this.ctx.fillStyle = `#a9f`; // set color
+        this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
+        this.ctx.fillStyle = `#a9f`; // set color
+        this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
+      }
+      for (var i = 1; i < Math.floor(this.indexFromHz(this.specMax) / stepCount); i++) {
         this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, yFromHz(i*100), 20, 1);
+        this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
+        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
       }
       for (var i = 1; i < this.specMax / 50; i++) {
         //
@@ -119,23 +140,65 @@ class _spectrogram {
   // takes an index and scales it to its Y coordinate
   yFromIndex(index) {
     if (this.scaleMode == 'linear') {
-      return (index * this.scaleY);
+      return this.viewPortBottom - (index * this.scaleY);
     }
     else if (this.scaleMode == 'log') {
-      return this.getBaseLog(index, this.logScale) * this.scaleY;
+      return this.viewPortBottom - (this.getBaseLog(index, this.logScale) * this.scaleY);
     }
   }
   // takes a Y value and returns its index in the array
   // undoes scaling
   indexFromY(y) {
     if (this.scaleMode == 'linear') {
-      return y / this.scaleY;
+      return (this.viewPortBottom - y) / this.scaleY;
     }
     else if (this.scaleMode == 'log') {
-      return this.unBaseLog(y / this.scaleY, this.logScale);
+      return this.unBaseLog((this.viewPortBottom - y) / this.scaleY, this.logScale);
     }
   }
   yFromHz(hz) {
-    return yFromIndex(indexFromHz(hz));
+    return this.yFromIndex(this.indexFromHz(hz));
+  }
+  hzFromY(y) {
+    return this.hzFromIndex(this.indexFromY(y));
+  }
+  // try to find the fundamental index
+  getFundamental(array) {
+    // get highest peak
+    let highestPeak = 0;
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] > highestPeak) {
+        highestPeak = array[i];
+      }
+    }
+    let peakThreshold = highestPeak * 0.7; // only look at things above this theshold
+    let currentPeakIndex = 0;
+    let currentPeakAmplitude = 0;
+    for (var i = 0; i < array.length; i++) {
+      // only look above threshold
+      if (array[i] > peakThreshold) {
+        // look for peaks
+        if (array[i] > currentPeakAmplitude) {
+          currentPeakIndex = i;
+          currentPeakAmplitude = array[i];
+        }
+      }
+      else if (currentPeakIndex > 0) {
+        currentPeakIndex = this.getMoreAccurateFundamental(array, currentPeakIndex);
+        return {"index" : currentPeakIndex, "amplitude" : currentPeakAmplitude};
+      }
+    }
+    return {"index" : 0, "amplitude" : 0};
+  }
+  getMoreAccurateFundamental(array, start) {
+    let total = array[start];
+    let div = 1;
+    for (var i = Math.max(start - 2, 0); i < Math.min(start + 2, array.length-1); i++) {
+      if (i != start) {
+        total += (array[i]) * i;
+        div += (array[i]);
+      }
+    }
+    return (total / div);
   }
 }
