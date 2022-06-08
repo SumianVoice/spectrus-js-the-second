@@ -14,9 +14,9 @@ function spectrum(stream) {
 }
 
 function mainLoop(dt) {
-  // console.log(dt);
-  gui.clear()
-  if (dt > 0) {
+  gui.clear() // clear the gui layer
+  // show FPS
+  if (dt !== 0) {
     gui.renderText(Math.floor(1/dt), 10, 30, "#fff", "20px", "Mono");
   }
   return;
