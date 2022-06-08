@@ -22,6 +22,7 @@ function mainLoop(dt) {
   gui.renderText(Math.floor(1/dt), 10, 30, "#fff", "20px", "Mono");
   spec.updateScale();
   // spec.clear();
-  spec.draw(fft.data)
+  spec.draw(fft.data);
+  gui.update();
   return;
 }
