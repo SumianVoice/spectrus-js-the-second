@@ -21,12 +21,14 @@ class _spectrogram {
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;
+    this.clear();
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     if ((this.canvas.width !== window.innerWidth) || (this.canvas.height !== window.innerHeight)) {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
+      this.clear();
     }
     if (this.scaleMode == 'linear') {
       this.scaleX = this.canvas.width / this.ahz(this.specMax);
@@ -84,10 +86,10 @@ class _spectrogram {
   }
   drawScale() {
     if (this.scaleMode === "log") {
-
+      //
     }
     else if (this.scaleMode === "linear") {
-
+      //
     }
   }
   // takes index and returns its Hz value
