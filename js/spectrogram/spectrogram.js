@@ -59,7 +59,7 @@ class _spectrogram {
       }
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
-        this.viewPortRight - 10,
+        this.viewPortRight - speed*dt,
         this.viewPortBottom - tmpY,
         speed*dt,
         tmpHeight);
