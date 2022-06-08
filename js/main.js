@@ -20,7 +20,7 @@ function mainLoop(dt) {
   gui.clear() // clear the gui layer
   // show FPS
   gui.renderText(Math.floor(1/dt), 10, 30, "#fff", "20px", "Mono");
-  spec.updateScale()
+  spec.updateScale();
   spec.clear();
   spec.draw(fft.data)
   return;

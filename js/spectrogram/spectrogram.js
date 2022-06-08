@@ -15,7 +15,7 @@ class _spectrogram {
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.scaleMode = "log";
-    this.logScale = 2;
+    this.logScale = 1.1;
     this.specMin = 0;
     this.specMax = 10000;
     this.scaleX = 1;
@@ -24,13 +24,17 @@ class _spectrogram {
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     if (this.scaleMode == 'linear') {
-      this.scaleX = this.width / this.ahz(this.specMax);
-      this.scaleY = this.height / this.ahz(this.specMax);
+      this.scaleX = this.canvas.width / this.ahz(this.specMax);
+      this.scaleY = this.canvas.height / this.ahz(this.specMax);
+      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortBottom = this.canvas.height;
     }
     else if (this.scaleMode == 'log') {
       const cutoff = this.getBaseLog(Math.ceil(this.ahz(this.specMin)) + 1);
       this.scaleX = this.canvas.width / this.getBaseLog(this.ahz(this.specMax), this.logScale);
       this.scaleY = this.canvas.height / this.getBaseLog(this.ahz(this.specMax), this.logScale);
+      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortBottom = this.canvas.height;
     }
   }
   clear() {
@@ -47,9 +51,18 @@ class _spectrogram {
   draw(data, colormap) {
     if (this.pause) {return "paused"}
     const speed = 500;
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 1; i < data.length; i++) {
+      const tmpY = Math.floor(this.toScaleY(i));
+      const tmpHeight = Math.ceil(tmpY - this.toScaleY(i-1));
+      if (i===10) {
+        gui.renderText(tmpHeight, 200, 30, "#fff", "20px", "Mono");
+      }
       this.ctx.fillStyle = this.getColor(data[i]);
-      this.ctx.fillRect(this.viewPortRight - speed*dt, this.viewPortBottom - this.toScaleY(i), speed*dt, 2);
+      this.ctx.fillRect(
+        this.viewPortRight - 10,
+        this.viewPortBottom - tmpY,
+        speed*dt,
+        tmpHeight);
     }
     return null;
   }
@@ -75,7 +88,7 @@ class _spectrogram {
       return (index * this.scaleY);
     }
     else if (this.scaleMode == 'log') {
-      return this.getBaseLog(this.logScale, index) * this.scaleY;
+      return this.getBaseLog(index, this.logScale) * this.scaleY;
     }
   }
   // takes a Y value and returns its index in the array
