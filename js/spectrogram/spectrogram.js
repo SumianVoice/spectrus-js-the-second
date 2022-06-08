@@ -10,6 +10,7 @@ class _spectrogram {
   }
   // draws the spectrogram from data
   draw(data) {
+    return null;
   }
   // takes index and returns its Hz value
   hz(index) {
