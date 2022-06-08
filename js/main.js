@@ -25,6 +25,7 @@ function mainLoop(dt) {
   spec.updateScale();
   // spec.drawScale();
   // spec.clear();
-  spec.draw(fft.data)
+  spec.draw(fft.data);
+  gui.update();
   return;
 }
