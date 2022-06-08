@@ -15,12 +15,13 @@ class _spectrogram {
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.scaleMode = "log";
-    this.logScale = 1.1;
+    this.logScale = 2;
     this.specMin = 0;
     this.specMax = 10000;
     this.scaleX = 1;
     this.scaleY = 1;
   }
+  // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     if (this.scaleMode == 'linear') {
       this.scaleX = this.width / this.ahz(this.specMax);
@@ -48,7 +49,7 @@ class _spectrogram {
     const speed = 500;
     for (var i = 0; i < data.length; i++) {
       this.ctx.fillStyle = this.getColor(data[i]);
-      this.ctx.fillRect(this.viewPortRight - speed*dt, this.toScaleY(i), speed*dt, 2);
+      this.ctx.fillRect(this.viewPortRight - speed*dt, this.viewPortBottom - this.toScaleY(i), speed*dt, 2);
     }
     return null;
   }
@@ -70,13 +71,13 @@ class _spectrogram {
   }
   // takes an index and scales it to its Y coordinate
   toScaleY(index) {
-      if (this.scaleMode == 'linear') {
-        return (index * this.scaleY);
-      }
-      else if (this.scaleMode == 'log') {
-        return this.getBaseLog(this.logScale, index) * this.scaleY;
-      }
+    if (this.scaleMode == 'linear') {
+      return (index * this.scaleY);
     }
+    else if (this.scaleMode == 'log') {
+      return this.getBaseLog(this.logScale, index) * this.scaleY;
+    }
+  }
   // takes a Y value and returns its index in the array
   // undoes scaling
   unScaleY(y) {
