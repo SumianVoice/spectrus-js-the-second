@@ -148,11 +148,11 @@ class _spectrogram {
   }
   // takes index and returns its Hz value
   hzFromIndex(index) {
-    return (index / this.frequencyBinCount) * (this.sampleRate/2);
+    return (index / this.frequencyBinCount) * (this.sampleRate/1); // this used to divide by 2, and that didn't work in this version but worked in the old version WHAT THE HECK
   }
   // converts hz to array position (float)
   indexFromHz(hz) {
-    return (hz / (this.sampleRate/2)) * this.frequencyBinCount;
+    return (hz / (this.sampleRate/1)) * this.frequencyBinCount;
   }
   //
   getBaseLog(number, base) {
