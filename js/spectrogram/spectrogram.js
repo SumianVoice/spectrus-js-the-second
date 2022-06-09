@@ -102,22 +102,22 @@ class _spectrogram {
     if (this.track.fundamental===true) {
       this.f[0] = this.getFundamental(data).index;
         this.plot(
-        this.viewPortRight-width+2,
+        this.viewPortRight-width,
         this.yFromIndex(this.f[0]),
-        "#333333ff", 4
+        "#333333ff", 2, 4
       );
       this.plot(
         this.viewPortRight-width,
         this.yFromIndex(this.f[0]),
-        "#ff0", 2
+        "#ff0", 2, 2
       );
     }
     return null;
   }
 
-  plot(x,y,color,size) {
+  plot(x,y,color,width,height) {
     this.ctx.fillStyle = color;
-    this.ctx.fillRect(x-size/2, y-size/2, size, size);
+    this.ctx.fillRect(x-width/2, y-height/2, width, height);
   }
   renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
     this.ctx.font = fontsize + " " + font;
