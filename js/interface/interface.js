@@ -1,4 +1,13 @@
 
+function mouseDown(event) {
+  //
+}
+function mouseUp(event) {
+  //
+}
+
+let mouse = new _mouseListener(mouseDown, mouseUp);
+
 
 class _GUI {
   constructor(container=window) {
@@ -7,19 +16,18 @@ class _GUI {
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
 
-    this.mouse = {
-      x : 0,
-      y : 0
-    };
-
-    document.addEventListener('mousemove', e => {
-      let r = this.canvas.getBoundingClientRect();
-      let x = e.clientX - r.left;
-      let y = e.clientY - r.top;
-
-      this.mouse.x = x;
-      this.mouse.y = y;
-    });
+    // this.mouse = {
+    //   x : 0,
+    //   y : 0
+    // };
+    // document.addEventListener('mousemove', e => {
+    //   let r = this.canvas.getBoundingClientRect();
+    //   let x = e.clientX - r.left;
+    //   let y = e.clientY - r.top;
+    //
+    //   this.mouse.x = x;
+    //   this.mouse.y = y;
+    // });
   }
   clear() {
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
@@ -34,13 +42,13 @@ class _GUI {
     this.ctx.strokeStyle = 'white';
 
     this.ctx.beginPath();
-    this.ctx.moveTo(0, this.mouse.y);
-    this.ctx.lineTo(this.canvas.width, this.mouse.y);
+    this.ctx.moveTo(0, mouse.y);
+    this.ctx.lineTo(this.canvas.width, mouse.y);
     this.ctx.stroke();
 
     this.ctx.beginPath();
-    this.ctx.moveTo(this.mouse.x, 0);
-    this.ctx.lineTo(this.mouse.x, this.canvas.height);
+    this.ctx.moveTo(mouse.x, 0);
+    this.ctx.lineTo(mouse.x, this.canvas.height);
     this.ctx.stroke();
   }
   update() {
