@@ -61,7 +61,7 @@ class _spectrogram {
   }
   clear() {
     this.ctx.fillStyle = this.getColor(0);
-    this.ctx.fillRect(0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
+    this.ctx.fillRect(0, 0, this.canvas.width-this.scaleWidth, this.viewPortBottom);
   }
   getColor(d) {
     if (colormap === undefined) {return `rbg(${d},${d},${d})`}
@@ -73,6 +73,8 @@ class _spectrogram {
   // draws the spectrogram from data
   draw(data, colormap) {
     if (this.pause) {return "paused"}
+    this.ctx.fillStyle = "#fff";
+    this.ctx.fillRect(0, this.viewPortBottom-1, this.canvas.width-this.scaleWidth, 1);
     const width = Math.max(Math.round(this.speed*dt), 1);
 
     // Move the canvas across a bit to scroll
@@ -86,7 +88,7 @@ class _spectrogram {
 
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
-    for (var i = 1; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {
       const tmpY = Math.floor(this.yFromIndex(i));
       const tmpHeight = tmpY - Math.ceil(this.yFromIndex(i-1));
       if (tmpHeight == -1) { // this number will be -1 when the height rounds to 0, because negative number (i-1) is Math.ceil()'d
@@ -100,17 +102,20 @@ class _spectrogram {
         tmpHeight);
     }
     if (this.track.fundamental===true) {
-      this.f[0] = this.getFundamental(data).index;
+      const tmpF0 = this.getFundamental(data);
+      if (tmpF0.amplitude > 150) {
+        this.f[0] = tmpF0.index;
+          this.plot(
+          this.viewPortRight-width,
+          this.yFromIndex(this.f[0]),
+          "#333333ff", 2, 4
+        );
         this.plot(
-        this.viewPortRight-width,
-        this.yFromIndex(this.f[0]),
-        "#333333ff", 2, 4
-      );
-      this.plot(
-        this.viewPortRight-width,
-        this.yFromIndex(this.f[0]),
-        "#ff0", 2, 2
-      );
+          this.viewPortRight-width,
+          this.yFromIndex(this.f[0]),
+          "#ff0", 2, 2
+        );
+      }
     }
     return null;
   }
@@ -225,7 +230,7 @@ class _spectrogram {
       }
       else if (currentPeakIndex > 0) {
         currentPeakIndex = this.getMoreAccurateFundamental(array, currentPeakIndex);
-        return {"index" : currentPeakIndex, "amplitude" : currentPeakAmplitude};
+        return {"index" : Math.max(currentPeakIndex,1), "amplitude" : currentPeakAmplitude};
       }
     }
     return {"index" : 0, "amplitude" : 0};
