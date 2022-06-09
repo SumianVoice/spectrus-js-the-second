@@ -84,6 +84,9 @@ class _spectrogram {
     for (var i = 1; i < data.length; i++) {
       const tmpY = Math.floor(this.yFromIndex(i));
       const tmpHeight = tmpY - Math.ceil(this.yFromIndex(i-1));
+      if (tmpHeight == -1) { // this number will be -1 when the height rounds to 0, because negative number (i-1) is Math.ceil()'d
+        continue;
+      }
       this.ctx.fillStyle = this.getColor(data[i]);
       this.ctx.fillRect(
         this.viewPortRight - width,
@@ -99,7 +102,6 @@ class _spectrogram {
           tmpHeight);
       }
     }
-    // this.renderText(this.hzFromIndex(37), this.viewPortRight + 80, this.yFromIndex(37) - 5, "#444", "15px");
     return null;
   }
   renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
