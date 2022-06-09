@@ -93,14 +93,6 @@ class _spectrogram {
         tmpY,
         width,
         tmpHeight);
-      if (i===37) { // adds a line to 100hz so we know how badly wrong it is
-        this.ctx.fillStyle = "#fff";
-        this.ctx.fillRect(
-          this.viewPortRight - width,
-          tmpY,
-          width,
-          tmpHeight);
-      }
     }
     return null;
   }

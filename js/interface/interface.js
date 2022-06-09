@@ -49,6 +49,7 @@ class _GUI {
     this.ctx.moveTo(this.mouse.x, 0);
     this.ctx.lineTo(this.mouse.x, this.canvas.height);
     this.ctx.stroke();
+    this.renderText(`${Math.floor(spec.hzFromY(this.mouse.y))}Hz`, this.mouse.x, this.mouse.y, "#fff", "20px", "Mono");
   }
   update() {
     if (this.mouse.keys.includes(0)) { // when press LMB
