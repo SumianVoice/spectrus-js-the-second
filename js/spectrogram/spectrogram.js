@@ -22,7 +22,14 @@ class _spectrogram {
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;
+    this.track = {
+      fundamental : true,
+      formants : false,
+      formantCount : 3
+    };
+    this.f = [0,0,0,0,0,0,0]; //f0 f1 f2 etc
     this.clear();
+    this.updateScale();
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
@@ -32,8 +39,6 @@ class _spectrogram {
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
-      this.viewPortRight = this.canvas.width - this.scaleWidth;
-      this.viewPortBottom = this.canvas.height;
       reDraw = true;
     }
     if (this.scaleMode == 'linear') {
@@ -94,7 +99,25 @@ class _spectrogram {
         width,
         tmpHeight);
     }
+    if (this.track.fundamental===true) {
+      this.f[0] = this.getFundamental(data).index;
+        this.plot(
+        this.viewPortRight-width+2,
+        this.yFromIndex(this.f[0]),
+        "#333333ff", 4
+      );
+      this.plot(
+        this.viewPortRight-width,
+        this.yFromIndex(this.f[0]),
+        "#ff0", 2
+      );
+    }
     return null;
+  }
+
+  plot(x,y,color,size) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(x-size/2, y-size/2, size, size);
   }
   renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
     this.ctx.font = fontsize + " " + font;
