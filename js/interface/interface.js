@@ -4,7 +4,7 @@ function mouseDown(event) {
 }
 function mouseUp(event) {
   //
-}
+} // should be replaced with a better system which I can't remember the name of
 
 let mouse = new _mouseListener(mouseDown, mouseUp);
 
