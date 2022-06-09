@@ -6,7 +6,6 @@ function mouseUp(event) {
   //
 } // should be replaced with a better system which I can't remember the name of
 
-let mouse = new _mouseListener(mouseDown, mouseUp);
 
 
 class _GUI {
@@ -15,7 +14,7 @@ class _GUI {
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
-
+    this.mouse = new _mouseListener(mouseDown, mouseUp);
     // this.mouse = {
     //   x : 0,
     //   y : 0
@@ -42,16 +41,18 @@ class _GUI {
     this.ctx.strokeStyle = 'white';
 
     this.ctx.beginPath();
-    this.ctx.moveTo(0, mouse.y);
-    this.ctx.lineTo(this.canvas.width, mouse.y);
+    this.ctx.moveTo(0, this.mouse.y);
+    this.ctx.lineTo(this.canvas.width, this.mouse.y);
     this.ctx.stroke();
 
     this.ctx.beginPath();
-    this.ctx.moveTo(mouse.x, 0);
-    this.ctx.lineTo(mouse.x, this.canvas.height);
+    this.ctx.moveTo(this.mouse.x, 0);
+    this.ctx.lineTo(this.mouse.x, this.canvas.height);
     this.ctx.stroke();
   }
   update() {
-    this.drawCrosshair();
+    if (this.mouse.keys.includes(0)) { // when press LMB
+      this.drawCrosshair();
+    }
   }
 }
