@@ -10,23 +10,21 @@ function mouseUp(event) {
 
 class _GUI {
   constructor(container=window) {
+    this.container = container;
     this.canvas = div.appendChild(document.createElement('canvas'));
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(mouseDown, mouseUp);
-    // this.mouse = {
-    //   x : 0,
-    //   y : 0
-    // };
-    // document.addEventListener('mousemove', e => {
-    //   let r = this.canvas.getBoundingClientRect();
-    //   let x = e.clientX - r.left;
-    //   let y = e.clientY - r.top;
-    //
-    //   this.mouse.x = x;
-    //   this.mouse.y = y;
-    // });
+  }
+  // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
+  updateScale() {
+    if ((this.canvas.width !== this.container.innerWidth) || (this.canvas.height !== this.container.innerHeight)) {
+      this.canvas.width = this.container.innerWidth;
+      this.canvas.height = this.container.innerHeight;
+      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortBottom = this.canvas.height;
+    }
   }
   clear() {
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
@@ -52,6 +50,7 @@ class _GUI {
     this.renderText(`${Math.floor(spec.hzFromY(this.mouse.y))}Hz`, this.mouse.x, this.mouse.y, "#fff", "20px", "Mono");
   }
   update() {
+    this.updateScale();
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawCrosshair();
     }

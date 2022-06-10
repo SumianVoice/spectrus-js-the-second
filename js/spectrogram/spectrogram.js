@@ -3,6 +3,7 @@
 class _spectrogram {
   constructor(fft, container=window) {
     this.fft = fft;
+    this.container = container;
     this.sampleRate = fft.audioCtx.sampleRate;
     this.frequencyBinCount = fft.analyser.fftSize;
     // by default creates a spectrogram canvas of the full size of the window
@@ -30,31 +31,39 @@ class _spectrogram {
       fundamentalAmp : 0
     };
     this.f = [{index:0,amp:0},0,0,0,0,0,0]; //f0 f1 f2 etc
+    this.formantColors = [
+      "#fff",
+      "#f3f",
+      "#ff1",
+      "#6ff",
+      "#f22",
+      "#ff2",
+      "#2f2",
+      "#22f"
+    ];
     this.clear();
     this.updateScale();
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     let reDraw = false;
-    if ((this.canvas.width !== window.innerWidth) || (this.canvas.height !== window.innerHeight)) {
+    if ((this.canvas.width !== this.container.innerWidth) || (this.canvas.height !== this.container.innerHeight)) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
+      this.canvas.width = this.container.innerWidth;
+      this.canvas.height = this.container.innerHeight;
+      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortBottom = this.canvas.height;
       reDraw = true;
     }
     if (this.scaleMode == 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
-      this.viewPortRight = this.canvas.width - this.scaleWidth;
-      this.viewPortBottom = this.canvas.height;
     }
     else if (this.scaleMode == 'log') {
       const cutoff = this.getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
       this.scaleX = this.canvas.width / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.scaleY = this.canvas.height / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
-      this.viewPortRight = this.canvas.width - this.scaleWidth;
-      this.viewPortBottom = this.canvas.height;
     }
     if (reDraw) {
       this.clear();
@@ -83,19 +92,14 @@ class _spectrogram {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
   plotFormants(data) {
+    const width = Math.ceil(this.speed*dt);
     if (this.track.fundamental===true) {
       const tmpF0 = this.getFundamental(data);
       if (tmpF0.amp > 150) {
-        this.f[0] = tmpF0.index;
-          this.plot(
-          this.viewPortRight-this.speed*dt,
-          this.yFromIndex(this.f[0]),
-          "#333333ff", 2, 4
-        );
         this.plot(
-          this.viewPortRight-this.speed*dt,
+          this.viewPortRight-width,
           this.yFromIndex(this.f[0]),
-          "#ff0", 2, 2
+          this.formantColors[0], width, 2
         );
       }
     }
@@ -127,10 +131,11 @@ class _spectrogram {
     this.plotFormants(data);
     return null;
   }
-
   plot(x,y,color,width,height) {
+    this.ctx.fillStyle = "#333333";
+    this.ctx.fillRect(x, Math.round(y-height/2)-1, width, height+2);
     this.ctx.fillStyle = color;
-    this.ctx.fillRect(x-width/2, y-height/2, width, height);
+    this.ctx.fillRect(x, Math.round(y-height/2), width, height);
   }
   renderText(text, x, y, color="#fff", fontsize="20px", font="Mono") {
     this.ctx.font = fontsize + " " + font;
