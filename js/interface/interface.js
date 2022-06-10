@@ -13,10 +13,9 @@ class _GUI {
     this.container = container;
     this.spec = spec;
     this.canvas = div.appendChild(document.createElement('canvas'));
-    this.scaleWidth = spec.scaleWidth
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
-    this.viewPortRight = this.canvas.width - this.scaleWidth;
+    this.viewPortRight = this.canvas.width - this.spec.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(mouseDown, mouseUp);
@@ -26,7 +25,7 @@ class _GUI {
     if ((this.canvas.width !== this.container.innerWidth) || (this.canvas.height !== this.container.innerHeight)) {
       this.canvas.width = this.container.innerWidth;
       this.canvas.height = this.container.innerHeight;
-      this.viewPortRight = this.canvas.width - this.scaleWidth;
+      this.viewPortRight = this.canvas.width - this.spec.scaleWidth;
       this.viewPortBottom = this.canvas.height;
     }
   }

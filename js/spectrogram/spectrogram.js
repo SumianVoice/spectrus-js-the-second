@@ -224,7 +224,9 @@ class _SPECTROGRAM {
   getFundamental(array) {
     // get highest peak
     let highestPeak = 0;
-    for (var i = 0; i < array.length; i++) {
+    // for (var i = 0; i < array.length; i++) { // slow version?
+    const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)))
+    for (var i = 0; i < tmpMaxCheck; i++) { // fast version?
       if (array[i] > highestPeak) {
         highestPeak = array[i];
       }
@@ -232,7 +234,7 @@ class _SPECTROGRAM {
     let peakThreshold = highestPeak * 0.7; // only look at things above this theshold
     let currentPeakIndex = 0;
     let currentPeakAmplitude = 0;
-    for (var i = 0; i < array.length; i++) {
+    for (var i = 0; i < tmpMaxCheck; i++) {
       // only look above threshold
       if (array[i] > peakThreshold) {
         // look for peaks
