@@ -73,8 +73,6 @@ class _spectrogram {
   // draws the spectrogram from data
   draw(data, colormap) {
     if (this.pause) {return "paused"}
-    this.ctx.fillStyle = "#fff";
-    this.ctx.fillRect(0, this.viewPortBottom-1, this.canvas.width-this.scaleWidth, 1);
     const width = Math.max(Math.round(this.speed*dt), 1);
 
     // Move the canvas across a bit to scroll
@@ -88,10 +86,10 @@ class _spectrogram {
 
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
-    for (var i = 0; i < data.length; i++) {
-      const tmpY = Math.floor(this.yFromIndex(i));
-      const tmpHeight = tmpY - Math.ceil(this.yFromIndex(i-1));
-      if (tmpHeight == -1) { // this number will be -1 when the height rounds to 0, because negative number (i-1) is Math.ceil()'d
+    for (var i = 0; i < data.length-1; i++) {
+      const tmpY = Math.ceil(this.yFromIndex(i));
+      const tmpHeight = Math.floor(this.yFromIndex(i+1)) - tmpY;
+      if (tmpHeight === -1) { // this number will be -1 when the height rounds to 0, because negative number (i-1) is Math.ceil()'d
         continue;
       }
       this.ctx.fillStyle = this.getColor(data[i]);
