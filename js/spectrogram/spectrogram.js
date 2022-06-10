@@ -71,10 +71,7 @@ class _spectrogram {
       ${colormap[this.colormap][d][2]*255})`);
   }
   // draws the spectrogram from data
-  draw(data, colormap) {
-    if (this.pause) {return "paused"}
-    const width = Math.max(Math.round(this.speed*dt), 1);
-
+  scrollCanvas(width) {
     // Move the canvas across a bit to scroll
     this.ctx.translate(-width, 0);
     // Draw the canvas to the side
@@ -82,8 +79,11 @@ class _spectrogram {
       0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
     // Reset the transformation matrix.
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-
+  }
+  draw(data, colormap) {
+    if (this.pause) {return "paused"}
+    const width = Math.max(Math.round(this.speed*dt), 1);
+    this.scrollCanvas(width);
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
     for (var i = 0; i < data.length-1; i++) {
@@ -228,6 +228,7 @@ class _spectrogram {
       }
       else if (currentPeakIndex > 0) {
         currentPeakIndex = this.getMoreAccurateFundamental(array, currentPeakIndex);
+        this.f[0] = Math.max(currentPeakIndex,1);
         return {"index" : Math.max(currentPeakIndex,1), "amplitude" : currentPeakAmplitude};
       }
     }
