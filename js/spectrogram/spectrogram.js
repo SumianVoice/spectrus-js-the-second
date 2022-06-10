@@ -25,9 +25,11 @@ class _spectrogram {
     this.track = {
       fundamental : true,
       formants : false,
-      formantCount : 3
+      formantCount : 3,
+      fundamentalMinAmp : 150,
+      fundamentalAmp : 0
     };
-    this.f = [0,0,0,0,0,0,0]; //f0 f1 f2 etc
+    this.f = [{index:0,amp:0},0,0,0,0,0,0]; //f0 f1 f2 etc
     this.clear();
     this.updateScale();
   }
@@ -80,6 +82,29 @@ class _spectrogram {
     // Reset the transformation matrix.
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
+  plotFormants(data) {
+    if (this.track.fundamental===true) {
+      const tmpF0 = this.getFundamental(data);
+      if (tmpF0.amp > 150) {
+        this.f[0] = tmpF0.index;
+          this.plot(
+          this.viewPortRight-this.speed*dt,
+          this.yFromIndex(this.f[0]),
+          "#333333ff", 2, 4
+        );
+        this.plot(
+          this.viewPortRight-this.speed*dt,
+          this.yFromIndex(this.f[0]),
+          "#ff0", 2, 2
+        );
+      }
+    }
+    if (this.track.formants===true) {
+      for (var i = 0; i < this.track.formantCount; i++) {
+        //
+      }
+    }
+  }
   draw(data, colormap) {
     if (this.pause) {return "paused"}
     const width = Math.max(Math.round(this.speed*dt), 1);
@@ -99,22 +124,7 @@ class _spectrogram {
         width,
         tmpHeight);
     }
-    if (this.track.fundamental===true) {
-      const tmpF0 = this.getFundamental(data);
-      if (tmpF0.amplitude > 150) {
-        this.f[0] = tmpF0.index;
-          this.plot(
-          this.viewPortRight-width,
-          this.yFromIndex(this.f[0]),
-          "#333333ff", 2, 4
-        );
-        this.plot(
-          this.viewPortRight-width,
-          this.yFromIndex(this.f[0]),
-          "#ff0", 2, 2
-        );
-      }
-    }
+    this.plotFormants(data);
     return null;
   }
 
@@ -229,10 +239,11 @@ class _spectrogram {
       else if (currentPeakIndex > 0) {
         currentPeakIndex = this.getMoreAccurateFundamental(array, currentPeakIndex);
         this.f[0] = Math.max(currentPeakIndex,1);
-        return {"index" : Math.max(currentPeakIndex,1), "amplitude" : currentPeakAmplitude};
+        this.track.fundamentalAmp = currentPeakAmplitude;
+        return {index : Math.max(currentPeakIndex,1), amp : currentPeakAmplitude};
       }
     }
-    return {"index" : 0, "amplitude" : 0};
+    return {index : 0, amplitude : 0};
   }
   getMoreAccurateFundamental(array, start) {
     let total = array[start];
