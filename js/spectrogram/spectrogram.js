@@ -1,6 +1,6 @@
 
 
-class _spectrogram {
+class _SPECTROGRAM {
   constructor(fft, container=window) {
     this.fft = fft;
     this.container = container;
@@ -19,7 +19,7 @@ class _spectrogram {
     this.scaleMode = "log";
     this.logScale = 2;
     this.specMin = 0;
-    this.specMax = 10000;
+    this.specMax = 15000;
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;

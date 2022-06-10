@@ -9,11 +9,15 @@ function mouseUp(event) {
 
 
 class _GUI {
-  constructor(container=window) {
+  constructor(spec, container=window) {
     this.container = container;
+    this.spec = spec;
     this.canvas = div.appendChild(document.createElement('canvas'));
+    this.scaleWidth = spec.scaleWidth
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
+    this.viewPortRight = this.canvas.width - this.scaleWidth;
+    this.viewPortBottom = this.canvas.height;
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(mouseDown, mouseUp);
   }
@@ -36,18 +40,42 @@ class _GUI {
     return true;
   }
   drawCrosshair() {
-    this.ctx.strokeStyle = 'white';
+    if (this.mouse.y < 0 || this.mouse.y > this.viewPortBottom) {
+      return "out of bounds";
+    }
 
+    this.ctx.strokeStyle = "#ffffff30";
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.mouse.x, 0);
+    this.ctx.lineTo(this.mouse.x, this.canvas.height);
+    this.ctx.stroke();
+
+    this.ctx.strokeStyle = "#fff";
     this.ctx.beginPath();
     this.ctx.moveTo(0, this.mouse.y);
     this.ctx.lineTo(this.canvas.width, this.mouse.y);
     this.ctx.stroke();
 
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.mouse.x, 0);
-    this.ctx.lineTo(this.mouse.x, this.canvas.height);
-    this.ctx.stroke();
-    this.renderText(`${Math.floor(spec.hzFromY(this.mouse.y))}Hz`, this.mouse.x, this.mouse.y, "#fff", "20px", "Mono");
+      // Hz render
+    this.ctx.fillStyle = "#11111150"; // background for the reading
+    this.ctx.fillRect(this.mouse.x+1, this.mouse.y+1, 100, 70);
+    this.renderText(`${Math.floor(this.spec.hzFromY(this.mouse.y))}Hz`, this.mouse.x + 10, this.mouse.y + 20, "#ffffaa", "20px", "Mono");
+    this.renderText(`${Math.round(((this.viewPortRight-this.mouse.x)/this.spec.speed)*10)/10}s`, this.mouse.x + 10, this.mouse.y + 100, "#ffffaa", "20px", "Mono");
+
+      // note render
+    const tmpNote = lookupNote(this.spec.hzFromY(this.mouse.y)); // get the note at this position
+    if (tmpNote != "0") {
+      this.renderText(
+        `${tmpNote}`,
+        this.mouse.x + 10,
+        this.mouse.y + 40,
+        "#ffff5550", "20px", "Mono");
+      this.renderText(
+        `${Math.round(getNoteHz(tmpNote))}Hz`,
+        this.mouse.x + 10,
+        this.mouse.y + 60,
+        "#ffff5550", "20px", "Mono");
+    }
   }
   update() {
     this.updateScale();
