@@ -32,7 +32,7 @@ class _SPECTROGRAM {
     };
     this.f = [{index:0,amp:0}]; //f0 f1 f2 etc
     for (var i = 0; i < 10; i++) { // add empty slots
-      this.f.push(f[0]);
+      this.f.push(this.f[0]);
     }
     this.formantColors = [
       "#fff", // f0
