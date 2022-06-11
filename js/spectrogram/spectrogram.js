@@ -47,6 +47,9 @@ class _SPECTROGRAM {
     this.clear();
     this.updateScale();
   }
+  update() {
+    this.getFundamental(this.fft.data);
+  }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     let reDraw = false;
@@ -97,8 +100,7 @@ class _SPECTROGRAM {
   plotFormants(data) {
     const width = Math.ceil(this.speed*dt);
     if (this.track.fundamental===true) {
-      const tmpF0 = this.getFundamental(data);
-      if (tmpF0.amp > 150) {
+      if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
         this.plot(
           this.viewPortRight-width,
           this.yFromIndex(this.f[0]),

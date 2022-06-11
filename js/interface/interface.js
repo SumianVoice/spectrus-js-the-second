@@ -123,5 +123,21 @@ class _GUI {
         this.drawRuler(this.ruler[i].x, this.ruler[i].y, "#ffaaff", 2);
       }
     }
+    this.spec.update();
+    if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
+    this.ctx.fillStyle = "#111";
+      this.ctx.fillRect(
+        this.spec.viewPortRight,
+        this.spec.yFromIndex(this.spec.f[0])-1,
+        20, 2 + 2
+      );
+      this.ctx.fillStyle = "#2f6";
+      this.ctx.fillRect(
+        this.spec.viewPortRight,
+        this.spec.yFromIndex(this.spec.f[0]),
+        20, 2
+      );
+      this.renderText(`${Math.floor(this.spec.hzFromIndex(this.spec.f[0]))}Hz`, this.spec.viewPortRight + 20, this.spec.yFromIndex(this.spec.f[0]) + 5, "#2f6", "20px", "Mono");
+    }
   }
 }
