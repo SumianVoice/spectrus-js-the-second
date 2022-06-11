@@ -16,7 +16,12 @@
   </head>
   <body>
     <div id="div"></div>
-
+    <div id="controls-wrap">
+      <button type="button" name="button" onclick="spec.specMaxIncrement(1000);">+</button>
+      <button type="button" name="button" onclick="spec.specMaxIncrement(-1000);">-</button>
+      <button type="button" name="button" onclick="spec.trackFundamentalToggle();">pitch tracking</button>
+      <button type="button" name="button" onclick="spec.scaleModeToggle();">scalemode</button>
+    </div>
     <script src="js/colormaps.js" charset="utf-8"></script>
     <script src="js/interface/mouse.js" charset="utf-8"></script>
     <script src="js/noteFreqTable.js" charset="utf-8"></script>

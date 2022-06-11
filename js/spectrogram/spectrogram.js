@@ -24,7 +24,7 @@ class _SPECTROGRAM {
     this.scaleY = 1;
     this.speed = 100;
     this.track = {
-      fundamental : true,
+      fundamental : false,
       formants : false,
       formantCount : 3,
       fundamentalMinAmp : 150,
@@ -262,5 +262,19 @@ class _SPECTROGRAM {
       }
     }
     return (total / div);
+  }
+  specMaxIncrement(amount) {
+    this.specMax = Math.min(Math.max(this.specMax + amount, 1000), 15000);
+    this.updateScale();
+    this.drawScale();
+  }
+  trackFundamentalToggle() {
+    this.track.fundamental = !this.track.fundamental;
+  }
+  scaleModeToggle() {
+    this.scaleMode = this.scaleMode === "log" ? "linear" : "log";
+  }
+  pauseToggle() {
+    this.pause = !this.pause;
   }
 }

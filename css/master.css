@@ -2,9 +2,31 @@
 body {
   background: #222;
 }
-* {
+canvas, html, body {
   position: fixed;
   padding: 0;
   margin: 0;
   overflow: hidden;
+}
+#controls-wrap {
+  padding: 10px;
+  display: grid;
+  width: 200px;
+}
+button {
+  border: none;
+  padding: 5px;
+  margin: 5px;
+  min-width: 60px;
+  margin-right: auto;
+  color: #fff;
+  background: #555;
+  filter: opacity(0.6);
+}
+button:hover {
+  background: #777;
+  filter: opacity(1);
+}
+button:active {
+  background: #555;
 }

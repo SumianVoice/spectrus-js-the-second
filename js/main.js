@@ -31,3 +31,12 @@ function mainLoop(dt) {
   gui.update();
   return;
 }
+
+
+//  add spacebar to pause
+const space_bar = 32;
+window.onkeydown = function(gfg){
+  if(gfg.keyCode === space_bar) {
+    spec.pauseToggle();
+  }
+};
