@@ -22,8 +22,8 @@ function mainLoop(dt) {
   fft.update();
   gui.clear(); // clear the gui layer
   // show FPS
-  avgFPS = ((1/dt) + avgFPS * 99) / 100;
-  gui.renderText(Math.floor(avgFPS), 10, 30, "#fff", "20px", "Mono");
+  avgFPS = ((1/dt) + avgFPS * 19) / 20;
+  gui.renderText(Math.floor(avgFPS), 10, spec.viewPortBottom - 10, "#fff", "20px", "Mono");
   spec.updateScale();
   // spec.drawScale();
   // spec.clear();

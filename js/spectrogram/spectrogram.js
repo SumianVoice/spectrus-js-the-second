@@ -148,37 +148,48 @@ class _SPECTROGRAM {
   }
   drawScale() {
     this.ctx.clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
-    let stepDist = 50;
+    let tmpStepDist = 50;
 
-    // do notes on the scale
+    // ========= notes scale =========
     let tmpHZ;
     this.ctx.font = 10 + "px " + "Mono";
     for (var i = 0; i < 12; i++) {
       // A0-A9 note
       tmpHZ = getNoteHz("C"+i);
       this.ctx.fillStyle = `#aa99ff33`; // set color
-      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 57, 1);
+      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 77, 1);
       this.ctx.fillStyle = `#a9f`; // set color
       this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
       // this.ctx.fillStyle = `#a9f`; // set color
-      this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
+      this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 80, this.yFromIndex(this.indexFromHz(tmpHZ)));
     }
+    // ========= main scale =========
     if (this.scaleMode === "log") {
-      for (var i = 1; i < this.canvas.height / stepDist; i++) {
-        this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, (i*stepDist), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*stepDist)), this.viewPortRight, (i*stepDist) - 5, "#444", "15px");
+      for (var i = 1; i < this.canvas.height / tmpStepDist; i++) {
+        this.ctx.fillStyle = "#555";
+        this.ctx.fillRect(this.viewPortRight, (i*tmpStepDist), 20, 1);
+        this.renderText(Math.floor(this.hzFromY(i*tmpStepDist)), this.viewPortRight, (i*tmpStepDist) - 5, "#444", "15px");
       }
-      for (var i = 1; i < this.specMax / 100; i++) {
-        //
+      // do some manual steps
+      const tmpSteps = [100, 500, 1000, 5000, 10000];
+      for (var i = 0; i < tmpSteps.length; i++) {
+        this.ctx.fillStyle = "#777";
+        this.ctx.fillRect(this.viewPortRight, this.yFromHz(tmpSteps[i]), 30, 1);
+        this.renderText(Math.floor(tmpSteps[i]), this.viewPortRight + 30, this.yFromHz(tmpSteps[i]) + 5, "#777", "15px");
       }
     }
     else if (this.scaleMode === "linear") {
-      stepDist = 30
-      for (var i = 0; i < this.canvas.height / stepDist; i++) {
+      tmpStepDist = 100; // hz
+      for (var i = 0; i < this.specMax / tmpStepDist; i++) {
+        this.ctx.fillStyle = "#555";
+        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i*tmpStepDist), 5, 1);
+        // this.renderText(Math.floor(i*tmpStepDist), this.viewPortRight, this.yFromHz(i*tmpStepDist) - 5, "#444", "15px");
+      }
+      tmpStepDist = 500; // hz
+      for (var i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, (i*stepDist), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*stepDist)), this.viewPortRight, (i*stepDist) - 5, "#444", "15px");
+        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i*tmpStepDist), 10, 1);
+        this.renderText(Math.floor(i*tmpStepDist), this.viewPortRight + 20, this.yFromHz(i*tmpStepDist) - 5, "#777", "15px");
       }
     }
   }
