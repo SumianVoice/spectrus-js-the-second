@@ -148,38 +148,38 @@ class _SPECTROGRAM {
   }
   drawScale() {
     this.ctx.clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
-    if (this.scaleMode === "log") {
-      let stepCount = 50;
-      // do notes on the scale
-      let tmpHZ;
-      this.ctx.font = 10 + "px " + "Mono";
-      for (var i = 0; i < 12; i++) {
-        // A0-A9 note
-        tmpHZ = getNoteHz("C"+i);
-        this.ctx.fillStyle = `#aa99ff33`; // set color
-        this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 57, 1);
-        this.ctx.fillStyle = `#a9f`; // set color
-        this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
-        // this.ctx.fillStyle = `#a9f`; // set color
-        this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
-      }
-      // for (var i = 1; i < Math.floor(this.viewPortBottom / stepCount); i++) {
-      //   this.ctx.fillStyle = "#777";
-      //   this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
-      //   this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px")
-      // }
+    let stepDist = 50;
 
-      for (var i = 1; i < this.canvas.height / stepCount; i++) {
+    // do notes on the scale
+    let tmpHZ;
+    this.ctx.font = 10 + "px " + "Mono";
+    for (var i = 0; i < 12; i++) {
+      // A0-A9 note
+      tmpHZ = getNoteHz("C"+i);
+      this.ctx.fillStyle = `#aa99ff33`; // set color
+      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 57, 1);
+      this.ctx.fillStyle = `#a9f`; // set color
+      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
+      // this.ctx.fillStyle = `#a9f`; // set color
+      this.ctx.fillText(`${"C"+i}`, this.canvas.width - this.scaleWidth + 60, this.yFromIndex(this.indexFromHz(tmpHZ)));
+    }
+    if (this.scaleMode === "log") {
+      for (var i = 1; i < this.canvas.height / stepDist; i++) {
         this.ctx.fillStyle = "#777";
-        this.ctx.fillRect(this.viewPortRight, (i*stepCount), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*stepCount)), this.viewPortRight, (i*stepCount) - 5, "#444", "15px");
+        this.ctx.fillRect(this.viewPortRight, (i*stepDist), 20, 1);
+        this.renderText(Math.floor(this.hzFromY(i*stepDist)), this.viewPortRight, (i*stepDist) - 5, "#444", "15px");
       }
       for (var i = 1; i < this.specMax / 100; i++) {
         //
       }
     }
     else if (this.scaleMode === "linear") {
-      //
+      stepDist = 30
+      for (var i = 0; i < this.canvas.height / stepDist; i++) {
+        this.ctx.fillStyle = "#777";
+        this.ctx.fillRect(this.viewPortRight, (i*stepDist), 20, 1);
+        this.renderText(Math.floor(this.hzFromY(i*stepDist)), this.viewPortRight, (i*stepDist) - 5, "#444", "15px");
+      }
     }
   }
   // takes index and returns its Hz value
@@ -276,6 +276,8 @@ class _SPECTROGRAM {
   }
   scaleModeToggle() {
     this.scaleMode = this.scaleMode === "log" ? "linear" : "log";
+    this.updateScale();
+    this.drawScale();
   }
   pauseToggle() {
     this.pause = !this.pause;
