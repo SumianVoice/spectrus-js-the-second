@@ -87,12 +87,12 @@ class _SPECTROGRAM {
   // draws the spectrogram from data
   scrollCanvas(width) {
     // Move the canvas across a bit to scroll
-    this.ctx.translate(-width, 0);
+    // this.ctx.translate(-width, 0);
     // Draw the canvas to the side
-    this.ctx.drawImage(this.canvas, 0, 0, this.canvas.width-this.scaleWidth, this.canvas.height,
+    this.ctx.drawImage(this.canvas, width, 0, this.canvas.width-this.scaleWidth, this.canvas.height,
       0, 0, this.canvas.width-this.scaleWidth, this.canvas.height);
     // Reset the transformation matrix.
-    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
   plotFormants(data) {
     const width = Math.ceil(this.speed*dt);
