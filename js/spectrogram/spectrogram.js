@@ -30,12 +30,15 @@ class _SPECTROGRAM {
       fundamentalMinAmp : 150,
       fundamentalAmp : 0
     };
-    this.f = [{index:0,amp:0},0,0,0,0,0,0]; //f0 f1 f2 etc
+    this.f = [{index:0,amp:0}]; //f0 f1 f2 etc
+    for (var i = 0; i < 10; i++) { // add empty slots
+      this.f.push(f[0]);
+    }
     this.formantColors = [
-      "#fff",
-      "#f3f",
-      "#ff1",
-      "#6ff",
+      "#fff", // f0
+      "#f3f", // f1
+      "#ff1", // f2
+      "#6ff", // f3
       "#f22",
       "#ff2",
       "#2f2",
