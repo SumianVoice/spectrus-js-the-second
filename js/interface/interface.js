@@ -22,6 +22,7 @@ class _GUI {
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(mouseDown, mouseUp);
     this.ruler = [{x:0,y:0,active:false}];
+    this.pitchAlert = parseInt(pitchFloorAlert.content);
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
@@ -118,6 +119,7 @@ class _GUI {
   }
   update() {
     this.updateScale();
+    this.pitchAlert = parseInt(pitchFloorAlert.content);
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawCrosshair();
     }
