@@ -166,16 +166,16 @@ class _SPECTROGRAM {
     // ========= main scale =========
     if (this.scaleMode === "log") {
       for (var i = 1; i < this.canvas.height / tmpStepDist; i++) {
-        this.ctx.fillStyle = "#555";
+        this.ctx.fillStyle = "#888";
         this.ctx.fillRect(this.viewPortRight, (i*tmpStepDist), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i*tmpStepDist)), this.viewPortRight, (i*tmpStepDist) - 5, "#444", "15px");
+        this.renderText(Math.floor(this.hzFromY(i*tmpStepDist)), this.viewPortRight, (i*tmpStepDist) - 5, "#777", "15px");
       }
       // do some manual steps
       const tmpSteps = [100, 500, 1000, 5000, 10000];
       for (var i = 0; i < tmpSteps.length; i++) {
-        this.ctx.fillStyle = "#777";
+        this.ctx.fillStyle = "#555";
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(tmpSteps[i]), 30, 1);
-        this.renderText(Math.floor(tmpSteps[i]), this.viewPortRight + 30, this.yFromHz(tmpSteps[i]) + 5, "#777", "15px");
+        this.renderText(Math.floor(tmpSteps[i]), this.viewPortRight + 30, this.yFromHz(tmpSteps[i]) + 5, "#444", "15px");
       }
     }
     else if (this.scaleMode === "linear") {

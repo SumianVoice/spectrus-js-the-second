@@ -1,6 +1,8 @@
 
 function mouseDown(event) {
-  //
+  if (true) {
+    //
+  }
 }
 function mouseUp(event) {
   //
@@ -19,6 +21,7 @@ class _GUI {
     this.viewPortBottom = this.canvas.height;
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(mouseDown, mouseUp);
+    this.ruler = [{x:0,y:0,active:false}];
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
@@ -38,17 +41,32 @@ class _GUI {
     this.ctx.fillText(text, x, y);
     return true;
   }
+  setRuler(x,y) {
+    this.ruler[0] = {x:x,y:y,active:true};
+  }
+  disableRuler() {
+    this.ruler.active = false;
+  }
   drawCrosshair() {
     if (this.mouse.y < 0 || this.mouse.y > this.viewPortBottom) {
       return "out of bounds";
     }
 
+    this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = "#ffffff30";
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouse.x, 0);
     this.ctx.lineTo(this.mouse.x, this.canvas.height);
     this.ctx.stroke();
 
+    this.ctx.lineWidth = 3;
+    this.ctx.strokeStyle = "#222";
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.mouse.y);
+    this.ctx.lineTo(this.canvas.width, this.mouse.y);
+    this.ctx.stroke();
+
+    this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = "#fff";
     this.ctx.beginPath();
     this.ctx.moveTo(0, this.mouse.y);
@@ -75,6 +93,28 @@ class _GUI {
         this.mouse.y + 60,
         "#ffff5550", "20px", "Mono");
     }
+  }
+  drawRuler(x,y) {
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = "#ffffff30";
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, 0);
+    this.ctx.lineTo(x, this.canvas.height);
+    this.ctx.stroke();
+
+    this.ctx.lineWidth = 3;
+    this.ctx.strokeStyle = "#111";
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, y);
+    this.ctx.lineTo(this.canvas.width, y);
+    this.ctx.stroke();
+
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = "#fff";
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, y);
+    this.ctx.lineTo(this.canvas.width, y);
+    this.ctx.stroke();
   }
   update() {
     this.updateScale();
