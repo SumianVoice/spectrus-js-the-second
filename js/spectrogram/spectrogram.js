@@ -261,7 +261,9 @@ class _SPECTROGRAM {
       }
       else if (currentPeakIndex > 0) {
         currentPeakIndex = this.getMoreAccurateFundamental(array, currentPeakIndex);
-        this.f[0] = Math.max(currentPeakIndex,1);
+        if (currentPeakAmplitude > this.track.fundamentalMinAmp) {
+          this.f[0] = Math.max(currentPeakIndex,1);
+        }
         this.track.fundamentalAmp = currentPeakAmplitude;
         return {index : Math.max(currentPeakIndex,1), amp : currentPeakAmplitude};
       }
@@ -284,8 +286,9 @@ class _SPECTROGRAM {
     this.updateScale();
     this.drawScale();
   }
-  trackFundamentalToggle() {
+  trackFormantToggle() {
     this.track.fundamental = !this.track.fundamental;
+    this.track.formants = true;
   }
   scaleModeToggle() {
     this.scaleMode = this.scaleMode === "log" ? "linear" : "log";
