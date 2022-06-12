@@ -1,6 +1,5 @@
 
 
-let formants;
 class _SPECTROGRAM {
   constructor(fft, container=window) {
     this.fft = fft;
@@ -49,6 +48,7 @@ class _SPECTROGRAM {
     this.updateScale();
   }
   update() {
+    if (this.pause) {return "paused"}
     this.getFundamental(this.fft.data);
   }
   // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
@@ -90,6 +90,7 @@ class _SPECTROGRAM {
   }
   // draws the spectrogram from data
   scrollCanvas(width) {
+    if (this.pause) {return "paused"}
     // Move the canvas across a bit to scroll
     // this.ctx.translate(-width, 0);
     // Draw the canvas to the side
@@ -99,7 +100,8 @@ class _SPECTROGRAM {
     // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
   plotFormants(data) {
-    const width = Math.ceil(this.speed*dt);
+    if (this.pause) {return "paused"}
+    const width = Math.min(Math.max(Math.round(this.speed*dt), 1),5);
     if (this.track.fundamental===true) {
       if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
         this.plot(
@@ -114,7 +116,8 @@ class _SPECTROGRAM {
       // formants
       let movAvg = this.movingAverage(data, 20);
       movAvg = this.movingAverage(movAvg, 10);
-      let movAvgPeaks = this.getPeaks(movAvg, 6, 1);
+      const movAvgPeaks = this.getPeaks(movAvg, 6, 1);
+      let formants;
       formants = this.getFormants(movAvgPeaks, this.track.formantCount);
       // console.log(formants);
       for (var i = 0; i < this.track.formantCount; i++) {
@@ -131,7 +134,7 @@ class _SPECTROGRAM {
   }
   draw(data, colormap) {
     if (this.pause) {return "paused"}
-    const width = Math.max(Math.round(this.speed*dt), 1);
+    const width = Math.min(Math.max(Math.round(this.speed*dt), 1),5);
     this.scrollCanvas(width);
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
@@ -296,15 +299,15 @@ class _SPECTROGRAM {
     }
     return (total / div);
   }
-  movingAverage(array, span) {
-    let newArray = new Array(array.length);
+  movingAverage(array, span, maxIndex=1000) {
+    let newArray = new Array(Math.min(array.length,maxIndex));
     let tmpCurAvg = 0;
     let totalDiv = 0;
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < Math.min(array.length,maxIndex); i++) {
       totalDiv = 0;
       tmpCurAvg = 0;
       for (var l = i-span; l < i+span; l++) {
-        if (l > 0 && l < array.length) {
+        if (l > 0 && l < Math.min(array.length,maxIndex)) {
           tmpCurAvg += array[l];
           totalDiv += 1;
         }
@@ -314,7 +317,6 @@ class _SPECTROGRAM {
     }
     return newArray;
   }
-
   getPeaks(array, baseSegmentSize, logPeaksScale) {
     let segmentSize = baseSegmentSize;
     let curSegment = 1;
@@ -349,7 +351,6 @@ class _SPECTROGRAM {
     // console.log(segmentSize);
     return peaks;
   }
-
   getFormants(array, formantCount=3) {
     let newFormants = [[0,0,0]];
     for (var i = 0; i < formantCount; i++) {
