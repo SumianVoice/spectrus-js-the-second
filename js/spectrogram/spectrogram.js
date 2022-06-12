@@ -1,5 +1,6 @@
 
 
+let formants;
 class _SPECTROGRAM {
   constructor(fft, container=window) {
     this.fft = fft;
@@ -30,9 +31,9 @@ class _SPECTROGRAM {
       fundamentalMinAmp : 150,
       fundamentalAmp : 0
     };
-    this.f = [{index:0,amp:0}]; //f0 f1 f2 etc
-    for (var i = 0; i < 10; i++) { // add empty slots
-      this.f.push(this.f[0]);
+    this.f = [{index:0,amp:0,active:false}]; //f0 f1 f2 etc
+    for (var i = 0; i < 4; i++) { // add empty slots
+      this.f.push({index:0,amp:0,active:false});
     }
     this.formantColors = [
       "#fff", // f0
@@ -108,9 +109,23 @@ class _SPECTROGRAM {
         );
       }
     }
+
     if (this.track.formants===true) {
+      // formants
+      let movAvg = this.movingAverage(data, 20);
+      movAvg = this.movingAverage(movAvg, 10);
+      let movAvgPeaks = this.getPeaks(movAvg, 6, 1);
+      formants = this.getFormants(movAvgPeaks, this.track.formantCount);
+      // console.log(formants);
       for (var i = 0; i < this.track.formantCount; i++) {
-        //
+        this.f[i+1].index = formants[i][0]; //skip 0
+        this.f[i+1].amp = formants[i][1]; //skip 0
+        this.f[i+1].active = true; //skip 0
+        this.plot(
+          this.viewPortRight-width,
+          this.yFromIndex(formants[i][0]),
+          this.formantColors[i+1], width, 2
+        );
       }
     }
   }
@@ -281,6 +296,116 @@ class _SPECTROGRAM {
     }
     return (total / div);
   }
+  movingAverage(array, span) {
+    let newArray = new Array(array.length);
+    let tmpCurAvg = 0;
+    let totalDiv = 0;
+    for (let i = 0; i < array.length; i++) {
+      totalDiv = 0;
+      tmpCurAvg = 0;
+      for (var l = i-span; l < i+span; l++) {
+        if (l > 0 && l < array.length) {
+          tmpCurAvg += array[l];
+          totalDiv += 1;
+        }
+      }
+      // tmpCurAvg = (array[i] + tmpCurAvg*span) / (span+1);
+      newArray[i] = tmpCurAvg / totalDiv;
+    }
+    return newArray;
+  }
+
+  getPeaks(array, baseSegmentSize, logPeaksScale) {
+    let segmentSize = baseSegmentSize;
+    let curSegment = 1;
+    let segmentStart = 0;
+
+    let peaks = new Array(0); // make a blank array for adding to later
+
+    let tmpPeakIndex = 0;
+    let tmpPeakValue = 0;
+    peaks.push([1,10]);
+    for (let k = 0; k < array.length; k++) {
+      // tmpPeakIndex = k;
+      if (array[k] >= tmpPeakValue) {
+        tmpPeakIndex = k;
+        tmpPeakValue = array[k];
+      }
+
+      if (k >= segmentStart + segmentSize) { // when you get to the end of the segment
+        peaks.push([tmpPeakIndex, tmpPeakValue]);
+        // peaks[curSegment][0] = tmpPeakIndex;
+        // peaks[curSegment][1] = tmpPeakValue;
+
+        segmentSize = this.unBaseLog(logPeaksScale, curSegment) * baseSegmentSize;
+        segmentStart = k;
+        curSegment++;
+        tmpPeakValue = 0;
+
+
+      }
+    }
+    // console.log(peaks);
+    // console.log(segmentSize);
+    return peaks;
+  }
+
+  getFormants(array, formantCount=3) {
+    let newFormants = [[0,0,0]];
+    for (var i = 0; i < formantCount; i++) {
+      newFormants.push([0,0,0]);
+    }
+    let highestPeak = 0;
+    // for (var i = 1; i < array.length; i++) {
+    //   if (array[i][1] > highestPeak) {
+    //     highestPeak = array[i][1]
+    //   }
+    // }
+    let minAmp = highestPeak;
+    let avgPos = 0;
+    let avgAmp = 0;
+    let totalDiv = 0;
+    const tmpExp = 40;
+    for (var i = 1; i < array.length-1; i++) {
+      // only look at the third formant back
+      if (array[i][1] > newFormants[0][1]) {
+        if (array[i-1][1] < array[i][1] && array[i][1] > array[i+1][1]) {
+          avgAmp = (array[i][1] + array[i-1][1] + array[i+1][1]) / 3;
+          avgPos = 0;
+          totalDiv = 0;
+          for (var l = -1; l < 2; l++) {
+            avgPos += array[(i+l)][0] * array[i+l][1]**tmpExp;
+            totalDiv += array[i+l][1]**tmpExp;
+          }
+          avgPos = avgPos / totalDiv;
+          newFormants.shift();
+          // newFormants.push(array[i]);
+          // newFormants.push([array[i][0],avgAmp]);
+          newFormants.push([avgPos,array[i][1],1]);
+        }
+      }
+    }
+
+    // let currentPeak = [0,0];
+    // for (var i = 1; i < array.length; i++) {
+    //   // only look above threshold
+    //   if (array[i][1] > minAmp) {
+    //     // look for peaks
+    //     if (array[i][1] > currentPeak[1]) {
+    //       currentPeak = array[i];
+    //     }
+    //     else if (array[i][1] < currentPeak[1]*0.3) {
+    //       newFormants.shift();
+    //       newFormants.push(currentPeak);
+    //     }
+    //   }
+    //   // else if (currentPeakIndex > 0) {
+    //   //   return {"index" : currentPeakIndex, "amplitude" : currentPeakAmplitude};
+    //   // }
+    // }
+      //
+    return newFormants;
+  }
   specMaxIncrement(amount) {
     this.specMax = Math.min(Math.max(this.specMax + amount, 1000), 15000);
     this.updateScale();
@@ -288,7 +413,7 @@ class _SPECTROGRAM {
   }
   trackFormantToggle() {
     this.track.fundamental = !this.track.fundamental;
-    this.track.formants = true;
+    this.track.formants = !this.track.formants;
   }
   scaleModeToggle() {
     this.scaleMode = this.scaleMode === "log" ? "linear" : "log";
