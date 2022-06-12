@@ -10,12 +10,14 @@ canvas, html, body {
   color: #fff;
   z-index: -1;
 }
-#controls-wrap > div {
+#controls-wrap {
   padding: 10px 100px 100px 10px;
+  width: 300px;
+}
+#controls-wrap > div {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  width: 210px;
-  border: 1px solid #ffffff10;
+  /* border: 1px solid #ffffff10; */
 }
 #controls-wrap > div {
   opacity: 0;
@@ -29,23 +31,23 @@ canvas, html, body {
   border-radius: 5px;
   box-shadow: 3px 3px 3px 0 #222;
 }
-/* Chrome, Safari, Edge, Opera */
+/* Chrome, Safari, Edge, Opera, remove number arrows from the input box */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
-
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
 }
+
 button, input {
   /* border: 1px solid #ffffff30; */
   border: none;
   padding: 5px;
   margin: 5px;
   /* min-width: 60px; */
-  width: 60px;
+  width: 90px;
   min-height: 30px;
   margin-right: auto;
   color: #fff;
@@ -62,5 +64,5 @@ button:active {
 }
 
 input {
-  width: 50px;
+  width: 80px;
 }
