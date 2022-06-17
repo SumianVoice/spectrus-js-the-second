@@ -11,6 +11,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new MouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
     this.ruler = [{ x: 0, y: 0, active: false }];
+    // TODO: remove this next line when pitchFloorAlert is implemented properly
+    // eslint-disable-next-line no-undef
     this.pitchAlert = parseInt(pitchFloorAlert.content, 10);
   }
 
@@ -171,6 +173,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   update() {
     this.updateScale();
+    // TODO: remove this next line when pitchFloorAlert is implemented properly
+    // eslint-disable-next-line no-undef
     this.pitchAlert = parseInt(pitchFloorAlert.content, 10); // update the pitch alert
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);
