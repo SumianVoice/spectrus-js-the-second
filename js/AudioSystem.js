@@ -5,7 +5,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
 
     this.avgFPS = 0;
 
-    this.fft = new _fftData();
+    this.fft = new FFTAnalyser();
     this.fft.init(this.audioStream);
 
     this.primaryCanvas = this.div.appendChild(document.createElement('canvas'));
