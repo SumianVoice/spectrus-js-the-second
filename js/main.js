@@ -9,9 +9,9 @@ function initialise(stream) { // eslint-disable-line no-unused-vars
 }
 
 //  add spacebar to pause
-const space_bar = 32;
+const spaceBar = 32;
 window.onkeydown = function (gfg) {
-  if (gfg.keyCode === space_bar) {
+  if (gfg.keyCode === spaceBar) {
     audioSystem.spec.pauseToggle();
   }
 };
