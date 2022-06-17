@@ -1,0 +1,31 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-plusplus": "off",
+        "no-continue": "off"
+    },
+    "globals": {
+        "animFrameLoop": "readonly",
+        "startLoop": "readonly",
+        "noteFreqTable": "readonly",
+        "colormap": "readonly",
+        "getNoteHz": "readonly",
+        "lookupNote": "readonly",
+        "initialise": "readonly",
+        "audioSystem": "readonly",
+        "AudioSystem": "readonly",
+        "_SPECTROGRAM": "readonly",
+        "_fftData": "readonly",
+        "_GUI": "readonly",
+        "_mouseListener": "readonly"
+    }
+}
