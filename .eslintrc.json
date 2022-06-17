@@ -10,7 +10,8 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "no-plusplus": "off"
+        "no-plusplus": "off",
+        "no-continue": "off"
     },
     "globals": {
         "animFrameLoop": "readonly",
