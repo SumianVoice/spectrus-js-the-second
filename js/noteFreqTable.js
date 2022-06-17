@@ -120,10 +120,10 @@ const noteFreqTable = { // eslint-disable-line no-unused-vars
   'A#9': 14917.24,
   B9: 15804.264,
 };
-function getNoteHz(note) {
+function getNoteHz(note) { // eslint-disable-line no-unused-vars
   return noteFreqTable[note];
 }
-function lookupNote(hz) {
+function lookupNote(hz) { // eslint-disable-line no-unused-vars
   let prevKey = 0;
   for (const key in noteFreqTable) {
     if (noteFreqTable[key] > hz) {

@@ -17,6 +17,8 @@
         "startLoop": "readonly",
         "noteFreqTable": "readonly",
         "colormap": "readonly",
+        "getNoteHz": "readonly",
+        "lookupNote": "readonly",
         "initialise": "readonly",
         "AudioSystem": "readonly",
         "_SPECTROGRAM": "readonly",
