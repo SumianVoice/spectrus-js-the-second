@@ -54,7 +54,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
   }
 
   update() {
-    if (this.pause) { return 'paused'; }
+    if (this.pause) return;
     this.getFundamental(this.fft.data);
   }
 
@@ -105,7 +105,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
 
   // draws the spectrogram from data
   scrollCanvas(width) {
-    if (this.pause) { return 'paused'; }
+    if (this.pause) return;
     // Move the canvas across a bit to scroll
     // this.ctx.translate(-width, 0);
     // Draw the canvas to the side
@@ -125,7 +125,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
   }
 
   plotFormants(data) {
-    if (this.pause) { return 'paused'; }
+    if (this.pause) return;
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     if (this.track.fundamental === true) {
       if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
@@ -162,7 +162,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
   }
 
   draw(data, colormap) {
-    if (this.pause) { return 'paused'; }
+    if (this.pause) return;
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     this.scrollCanvas(width);
     // loop through all array position and render each in their proper position
@@ -184,7 +184,6 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       );
     }
     this.plotFormants(data);
-    return null;
   }
 
   plot(x, y, color, width, height) {
@@ -315,6 +314,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     if (this.scaleMode === 'log') {
       return this.viewPortBottom - (this.getBaseLog(index, this.logScale) * this.scaleY);
     }
+    throw new Error('invalid scale mode');
   }
 
   // takes a Y value and returns its index in the array
@@ -326,6 +326,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     if (this.scaleMode === 'log') {
       return this.unBaseLog((this.viewPortBottom - y) / this.scaleY, this.logScale);
     }
+    throw new Error('invalid scale mode');
   }
 
   yFromHz(hz) {
