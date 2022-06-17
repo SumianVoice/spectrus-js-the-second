@@ -1,7 +1,6 @@
 let startTime; let
   previousTimeStamp;
 let callback;
-let dt;
 
 function animFrameLoop(timestamp) { // eslint-disable-line no-unused-vars
   if (startTime === undefined) {
@@ -9,7 +8,7 @@ function animFrameLoop(timestamp) { // eslint-disable-line no-unused-vars
     previousTimeStamp = timestamp;
   }
 
-  dt = (timestamp - previousTimeStamp) / 1000;
+  const dt = (timestamp - previousTimeStamp) / 1000;
   callback(dt);
 
   previousTimeStamp = timestamp;

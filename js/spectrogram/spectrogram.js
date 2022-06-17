@@ -252,7 +252,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
-  plotFormants(data) {
+  plotFormants(data, dt) {
     if (this.pause) return;
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     if (this.track.fundamental === true) {
@@ -289,7 +289,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     }
   }
 
-  draw(data, colormap) {
+  draw(data, dt) {
     if (this.pause) return;
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     this.scrollCanvas(width);
@@ -311,7 +311,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
         tmpHeight,
       );
     }
-    this.plotFormants(data);
+    this.plotFormants(data, dt);
   }
 
   plot(x, y, color, width, height) {

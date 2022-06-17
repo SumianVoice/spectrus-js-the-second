@@ -29,7 +29,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
     this.spec.updateScale();
     // spec.drawScale();
     // spec.clear();
-    this.spec.draw(this.fft.data);
+    this.spec.draw(this.fft.data, dt);
     this.gui.update();
     return true;
   }
