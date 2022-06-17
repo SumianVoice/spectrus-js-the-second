@@ -201,7 +201,7 @@ class _SPECTROGRAM {
     // ========= notes scale =========
     let tmpHZ;
     this.ctx.font = `${10}px ` + 'Mono';
-    for (var i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
       // A0-A9 note
       tmpHZ = getNoteHz(`C${i}`);
       this.ctx.fillStyle = '#aa99ff33'; // set color
@@ -213,27 +213,27 @@ class _SPECTROGRAM {
     }
     // ========= main scale =========
     if (this.scaleMode === 'log') {
-      for (var i = 1; i < this.canvas.height / tmpStepDist; i++) {
+      for (let i = 1; i < this.canvas.height / tmpStepDist; i++) {
         this.ctx.fillStyle = '#888';
         this.ctx.fillRect(this.viewPortRight, (i * tmpStepDist), 20, 1);
         this.renderText(Math.floor(this.hzFromY(i * tmpStepDist)), this.viewPortRight, (i * tmpStepDist) - 5, '#777', '15px');
       }
       // do some manual steps
       const tmpSteps = [100, 500, 1000, 5000, 10000];
-      for (var i = 0; i < tmpSteps.length; i++) {
+      for (let i = 0; i < tmpSteps.length; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(tmpSteps[i]), 30, 1);
         this.renderText(Math.floor(tmpSteps[i]), this.viewPortRight + 30, this.yFromHz(tmpSteps[i]) + 5, '#444', '15px');
       }
     } else if (this.scaleMode === 'linear') {
       tmpStepDist = 100; // hz
-      for (var i = 0; i < this.specMax / tmpStepDist; i++) {
+      for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 5, 1);
         // this.renderText(Math.floor(i*tmpStepDist), this.viewPortRight, this.yFromHz(i*tmpStepDist) - 5, "#444", "15px");
       }
       tmpStepDist = 500; // hz
-      for (var i = 0; i < this.specMax / tmpStepDist; i++) {
+      for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#777';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 10, 1);
         this.renderText(Math.floor(i * tmpStepDist), this.viewPortRight + 20, this.yFromHz(i * tmpStepDist) - 5, '#777', '15px');
@@ -296,7 +296,7 @@ class _SPECTROGRAM {
     let highestPeak = 0;
     // for (var i = 0; i < array.length; i++) { // slow version?
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
-    for (var i = 0; i < tmpMaxCheck; i++) { // fast version?
+    for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
       if (array[i] > highestPeak) {
         highestPeak = array[i];
       }
@@ -304,7 +304,7 @@ class _SPECTROGRAM {
     const peakThreshold = highestPeak * 0.7; // only look at things above this theshold
     let currentPeakIndex = 0;
     let currentPeakAmplitude = 0;
-    for (var i = 0; i < tmpMaxCheck; i++) {
+    for (let i = 0; i < tmpMaxCheck; i++) {
       // only look above threshold
       if (array[i] > peakThreshold) {
         // look for peaks
@@ -390,7 +390,7 @@ class _SPECTROGRAM {
 
   getFormants(array, formantCount = 3) {
     const newFormants = [[0, 0, 0]];
-    for (var i = 0; i < formantCount; i++) {
+    for (let i = 0; i < formantCount; i++) {
       newFormants.push([0, 0, 0]);
     }
     const highestPeak = 0;
@@ -404,7 +404,7 @@ class _SPECTROGRAM {
     let avgAmp = 0;
     let totalDiv = 0;
     const tmpExp = 40;
-    for (var i = 1; i < array.length - 1; i++) {
+    for (let i = 1; i < array.length - 1; i++) {
       // only look at the third formant back
       if (array[i][1] > newFormants[0][1]) {
         if (array[i - 1][1] < array[i][1] && array[i][1] > array[i + 1][1]) {
