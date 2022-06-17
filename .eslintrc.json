@@ -23,7 +23,7 @@
         "initialise": "readonly",
         "audioSystem": "readonly",
         "AudioSystem": "readonly",
-        "_SPECTROGRAM": "readonly",
+        "Spectrogram": "readonly",
         "_fftData": "readonly",
         "_GUI": "readonly",
         "_mouseListener": "readonly"

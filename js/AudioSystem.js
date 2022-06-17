@@ -11,7 +11,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
     this.primaryCanvas = this.div.appendChild(document.createElement('canvas'));
     this.guiCanvas = this.div.appendChild(document.createElement('canvas'));
 
-    this.spec = new _SPECTROGRAM(this);
+    this.spec = new Spectrogram(this);
     this.spec.updateScale();
     this.spec.drawScale();
 
