@@ -70,10 +70,10 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       this.viewPortBottom = this.canvas.height;
       reDraw = true;
     }
-    if (this.scaleMode == 'linear') {
+    if (this.scaleMode === 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
-    } else if (this.scaleMode == 'log') {
+    } else if (this.scaleMode === 'log') {
       const cutoff = this.getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
       this.scaleX = this.canvas.width / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.scaleY = this.canvas.height / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
@@ -263,10 +263,10 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
 
   // takes an index and scales it to its Y coordinate
   yFromIndex(index) {
-    if (this.scaleMode == 'linear') {
+    if (this.scaleMode === 'linear') {
       return this.viewPortBottom - (index * this.scaleY);
     }
-    if (this.scaleMode == 'log') {
+    if (this.scaleMode === 'log') {
       return this.viewPortBottom - (this.getBaseLog(index, this.logScale) * this.scaleY);
     }
   }
@@ -274,10 +274,10 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
   // takes a Y value and returns its index in the array
   // undoes scaling
   indexFromY(y) {
-    if (this.scaleMode == 'linear') {
+    if (this.scaleMode === 'linear') {
       return (this.viewPortBottom - y) / this.scaleY;
     }
-    if (this.scaleMode == 'log') {
+    if (this.scaleMode === 'log') {
       return this.unBaseLog((this.viewPortBottom - y) / this.scaleY, this.logScale);
     }
   }
@@ -328,7 +328,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     let total = array[start];
     let div = 1;
     for (let i = Math.max(start - 2, 0); i < Math.min(start + 2, array.length - 1); i++) {
-      if (i != start) {
+      if (i !== start) {
         total += (array[i]) * i;
         div += (array[i]);
       }

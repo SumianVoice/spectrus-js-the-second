@@ -19,7 +19,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
   }
 
   update(dt) {
-    if (dt == 0) { return false; } // don't continue if infinite fps
+    if (dt === 0) { return false; } // don't continue if infinite fps
 
     this.fft.update();
     this.gui.clear(); // clear the gui layer

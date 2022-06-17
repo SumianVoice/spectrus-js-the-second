@@ -106,7 +106,7 @@ class _GUI { // eslint-disable-line no-unused-vars
 
     // note render
     const tmpNote = lookupNote(this.spec.hzFromY(y)); // get the note at this position
-    if (tmpNote != '0') {
+    if (tmpNote != '0') { // eslint-disable-line eqeqeq
       // show the note
       this.renderText(
         `${tmpNote}`,
