@@ -1,13 +1,12 @@
 
 
 class _SPECTROGRAM {
-  constructor(fft, container=window) {
-    this.fft = fft;
+  constructor(audioSystem, container=window) {
+    this.audioSystem = audioSystem;
     this.container = container;
-    this.sampleRate = fft.audioCtx.sampleRate;
-    this.frequencyBinCount = fft.analyser.fftSize;
+    this.sampleRate = this.fft.audioCtx.sampleRate;
+    this.frequencyBinCount = this.fft.analyser.fftSize;
     // by default creates a spectrogram canvas of the full size of the window
-    this.canvas = div.appendChild(document.createElement('canvas'));
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
@@ -47,6 +46,15 @@ class _SPECTROGRAM {
     this.clear();
     this.updateScale();
   }
+
+  get canvas() {
+    return this.audioSystem.primaryCanvas;
+  }
+  
+  get fft() {
+    return this.audioSystem.fft;
+  }
+
   update() {
     if (this.pause) {return "paused"}
     this.getFundamental(this.fft.data);
