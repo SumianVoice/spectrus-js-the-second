@@ -4,7 +4,9 @@
   "description": "A hopefully less jank spectrogram",
   "scripts": {
     "lint:js": "eslint js/",
-    "lint": "npm run lint:js"
+    "fixlint:js": "eslint --fix js/",
+    "lint": "npm run lint:js",
+    "fixlint": "npm run fixlint:js"
   },
   "repository": {
     "type": "git",

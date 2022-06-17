@@ -18,3 +18,6 @@ This is an html + js program. You can either load it at [specv2.sumianvoice.com]
 
 ## On mobile
 Mobile is not supported but most devices will run it. Keep in mind this program is fairly CPU intensive.
+
+## Contributing
+If you'd like to contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
