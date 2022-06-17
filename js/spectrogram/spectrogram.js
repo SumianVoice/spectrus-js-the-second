@@ -58,10 +58,14 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     this.getFundamental(this.fft.data);
   }
 
-  // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
+  // get the scale of the canvas.
+  // That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
     let reDraw = false;
-    if ((this.canvas.width !== this.container.innerWidth) || (this.canvas.height !== this.container.innerHeight)) {
+    if (
+      (this.canvas.width !== this.container.innerWidth)
+      || (this.canvas.height !== this.container.innerHeight)
+    ) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = this.container.innerWidth;
@@ -75,8 +79,10 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
     } else if (this.scaleMode === 'log') {
       const cutoff = this.getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
-      this.scaleX = this.canvas.width / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
-      this.scaleY = this.canvas.height / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
+      this.scaleX = this.canvas.width
+        / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
+      this.scaleY = this.canvas.height
+        / this.getBaseLog(this.indexFromHz(this.specMax), this.logScale);
     }
     if (reDraw) {
       this.clear();
@@ -163,8 +169,10 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     // for the default setting, this does 8000 or so entries
     for (let i = 0; i < data.length - 1; i++) {
       const tmpY = Math.ceil(this.yFromIndex(i));
+      // this number will be -1 when the height rounds to 0,
+      // because negative number (i-1) is Math.ceil()'d
       const tmpHeight = Math.floor(this.yFromIndex(i + 1)) - tmpY;
-      if (tmpHeight === -1) { // this number will be -1 when the height rounds to 0, because negative number (i-1) is Math.ceil()'d
+      if (tmpHeight === -1) {
         continue;
       }
       this.ctx.fillStyle = this.getColor(data[i]);
@@ -204,45 +212,84 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       // A0-A9 note
       tmpHZ = getNoteHz(`C${i}`);
       this.ctx.fillStyle = '#aa99ff33'; // set color
-      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 77, 1);
+      this.ctx.fillRect(
+        this.canvas.width - this.scaleWidth,
+        this.yFromIndex(this.indexFromHz(tmpHZ)),
+        77,
+        1,
+      );
       this.ctx.fillStyle = '#a9f'; // set color
-      this.ctx.fillRect(this.canvas.width - this.scaleWidth, this.yFromIndex(this.indexFromHz(tmpHZ)), 5, 1);
+      this.ctx.fillRect(
+        this.canvas.width - this.scaleWidth,
+        this.yFromIndex(this.indexFromHz(tmpHZ)),
+        5,
+        1,
+      );
       // this.ctx.fillStyle = `#a9f`; // set color
-      this.ctx.fillText(`${`C${i}`}`, this.canvas.width - this.scaleWidth + 80, this.yFromIndex(this.indexFromHz(tmpHZ)));
+      this.ctx.fillText(
+        `${`C${i}`}`,
+        this.canvas.width - this.scaleWidth + 80,
+        this.yFromIndex(this.indexFromHz(tmpHZ)),
+      );
     }
     // ========= main scale =========
     if (this.scaleMode === 'log') {
       for (let i = 1; i < this.canvas.height / tmpStepDist; i++) {
         this.ctx.fillStyle = '#888';
         this.ctx.fillRect(this.viewPortRight, (i * tmpStepDist), 20, 1);
-        this.renderText(Math.floor(this.hzFromY(i * tmpStepDist)), this.viewPortRight, (i * tmpStepDist) - 5, '#777', '15px');
+        this.renderText(
+          Math.floor(this.hzFromY(i * tmpStepDist)),
+          this.viewPortRight,
+          (i * tmpStepDist) - 5,
+          '#777',
+          '15px',
+        );
       }
       // do some manual steps
       const tmpSteps = [100, 500, 1000, 5000, 10000];
       for (let i = 0; i < tmpSteps.length; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(tmpSteps[i]), 30, 1);
-        this.renderText(Math.floor(tmpSteps[i]), this.viewPortRight + 30, this.yFromHz(tmpSteps[i]) + 5, '#444', '15px');
+        this.renderText(
+          Math.floor(tmpSteps[i]),
+          this.viewPortRight + 30,
+          this.yFromHz(tmpSteps[i]) + 5,
+          '#444',
+          '15px',
+        );
       }
     } else if (this.scaleMode === 'linear') {
       tmpStepDist = 100; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 5, 1);
-        // this.renderText(Math.floor(i*tmpStepDist), this.viewPortRight, this.yFromHz(i*tmpStepDist) - 5, "#444", "15px");
+        // this.renderText(
+        //   Math.floor(i*tmpStepDist),
+        //   this.viewPortRight,
+        //   this.yFromHz(i*tmpStepDist) - 5, "#444", "15px"
+        // );
       }
       tmpStepDist = 500; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#777';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 10, 1);
-        this.renderText(Math.floor(i * tmpStepDist), this.viewPortRight + 20, this.yFromHz(i * tmpStepDist) - 5, '#777', '15px');
+        this.renderText(
+          Math.floor(i * tmpStepDist),
+          this.viewPortRight + 20,
+          this.yFromHz(i * tmpStepDist) - 5,
+          '#777',
+          '15px',
+        );
       }
     }
   }
 
   // takes index and returns its Hz value
   hzFromIndex(index) {
-    return (index / this.frequencyBinCount) * (this.sampleRate / 1); // this used to divide by 2, and that didn't work in this version but worked in the old version WHAT THE HECK
+    // this used to divide by 2, and that didn't work in this version but worked in the old version
+    // WHAT THE HECK - Sumi
+    // Hey Sumi: it's probably because sampleRate is twice fftSize, lol - hle0
+    return (index / this.frequencyBinCount) * (this.sampleRate / 1);
   }
 
   // converts hz to array position (float)

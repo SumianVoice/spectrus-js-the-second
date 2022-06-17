@@ -36,9 +36,13 @@ class _GUI { // eslint-disable-line no-unused-vars
     //
   } // should be replaced with a better system which I can't remember the name of
 
-  // get the scale of the canvas. That is, how much do I need to multiply by to fill the screen from the fft.data
+  // get the scale of the canvas.
+  // That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
-    if ((this.canvas.width !== this.container.innerWidth) || (this.canvas.height !== this.container.innerHeight)) {
+    if (
+      (this.canvas.width !== this.container.innerWidth)
+      || (this.canvas.height !== this.container.innerHeight)
+    ) {
       this.canvas.width = this.container.innerWidth;
       this.canvas.height = this.container.innerHeight;
       this.viewPortRight = this.canvas.width - this.spec.scaleWidth;
@@ -102,7 +106,14 @@ class _GUI { // eslint-disable-line no-unused-vars
     this.ctx.fillStyle = '#11111150'; // background for the reading
     this.ctx.fillRect(x + 1, y + 1, 100, 70);
     this.renderText(`${Math.floor(this.spec.hzFromY(y))}Hz`, x + 10, y + 20, color, '20px', 'Mono');
-    // this.renderText(`${Math.round(((this.viewPortRight-x)/this.spec.speed)*10)/10}s`, x + 10, y + 100, "#ffffaa", "20px", "Mono"); // show time, but it's broken?
+    // this.renderText(
+    //   `${Math.round(((this.viewPortRight-x)/this.spec.speed)*10)/10}s`,
+    //   x + 10,
+    //   y + 100,
+    //   "#ffffaa",
+    //   "20px",
+    //   "Mono"
+    // ); // show time, but it's broken?
 
     // note render
     const tmpNote = lookupNote(this.spec.hzFromY(y)); // get the note at this position
@@ -148,7 +159,14 @@ class _GUI { // eslint-disable-line no-unused-vars
       20,
       2,
     );
-    this.renderText(`${Math.floor(this.spec.hzFromIndex(this.spec.f[0]))}Hz`, this.spec.viewPortRight + 20, this.spec.yFromIndex(this.spec.f[0]) + 5, tmpColor, '20px', 'Mono');
+    this.renderText(
+      `${Math.floor(this.spec.hzFromIndex(this.spec.f[0]))}Hz`,
+      this.spec.viewPortRight + 20,
+      this.spec.yFromIndex(this.spec.f[0]) + 5,
+      tmpColor,
+      '20px',
+      'Mono',
+    );
   }
 
   update() {
