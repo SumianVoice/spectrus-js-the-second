@@ -124,17 +124,34 @@ function getNoteHz(note) { // eslint-disable-line no-unused-vars
   return noteFreqTable[note];
 }
 function lookupNote(hz) { // eslint-disable-line no-unused-vars
-  let prevKey = 0;
-  for (const key in noteFreqTable) {
-    if (noteFreqTable[key] > hz) {
-      if (Math.abs(noteFreqTable[key] - hz)
-          < Math.abs(noteFreqTable[prevKey] - hz) && prevKey) {
-        return key;
-      }
+  const keys = Object.keys(noteFreqTable);
 
-      return prevKey;
+  // lowerBound < hz < upperBound
+  let upperBound = null;
+  let lowerBound = null;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const diff = keys[i] - hz;
+    if (diff === 0) { // exactly the same
+      return key;
+    } if (diff > 0) { // key is higher than hz
+      if (upperBound === null || noteFreqTable[upperBound] > noteFreqTable[key]) {
+        upperBound = key; // reduce upper bound
+      }
+    } else if (diff < 0) { // key is lower than hz
+      if (lowerBound === null || noteFreqTable[lowerBound] < noteFreqTable[key]) {
+        lowerBound = key; // increase lower bound
+      }
     }
-    prevKey = key;
   }
-  return false;
+
+  if (upperBound === null || lowerBound === null || upperBound === lowerBound) {
+    return false;
+  }
+
+  const upperError = Math.abs(hz - noteFreqTable[upperBound]);
+  const lowerError = Math.abs(hz - noteFreqTable[lowerBound]);
+
+  return upperError < lowerError ? upperBound : lowerBound;
 }
