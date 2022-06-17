@@ -15,7 +15,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
     this.spec.updateScale();
     this.spec.drawScale();
 
-    this.gui = new _GUI(this);
+    this.gui = new GUIOverlay(this);
   }
 
   update(dt) {
