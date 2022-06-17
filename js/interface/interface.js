@@ -32,7 +32,7 @@ class _GUI { // eslint-disable-line no-unused-vars
     }
   }
 
-  mouseUp(event) {
+  mouseUp(event) { // eslint-disable-line no-unused-vars,class-methods-use-this
     //
   } // should be replaced with a better system which I can't remember the name of
 
