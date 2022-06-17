@@ -1,4 +1,4 @@
-class _fftData { // eslint-disable-line no-unused-vars
+class FFTAnalyser { // eslint-disable-line no-unused-vars
   constructor() {
     this.data = false;
     this.analyser = false;

@@ -126,7 +126,7 @@ function getFormants(array, formantCount = 3) {
   return newFormants;
 }
 
-class _SPECTROGRAM { // eslint-disable-line no-unused-vars
+class Spectrogram { // eslint-disable-line no-unused-vars
   constructor(audioSystem, container = window) {
     this.audioSystem = audioSystem;
     this.container = container;

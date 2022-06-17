@@ -5,17 +5,17 @@ class AudioSystem { // eslint-disable-line no-unused-vars
 
     this.avgFPS = 0;
 
-    this.fft = new _fftData();
+    this.fft = new FFTAnalyser();
     this.fft.init(this.audioStream);
 
     this.primaryCanvas = this.div.appendChild(document.createElement('canvas'));
     this.guiCanvas = this.div.appendChild(document.createElement('canvas'));
 
-    this.spec = new _SPECTROGRAM(this);
+    this.spec = new Spectrogram(this);
     this.spec.updateScale();
     this.spec.drawScale();
 
-    this.gui = new _GUI(this);
+    this.gui = new GUIOverlay(this);
   }
 
   update(dt) {

@@ -23,9 +23,9 @@
         "initialise": "readonly",
         "audioSystem": "readonly",
         "AudioSystem": "readonly",
-        "_SPECTROGRAM": "readonly",
-        "_fftData": "readonly",
-        "_GUI": "readonly",
-        "_mouseListener": "readonly"
+        "Spectrogram": "readonly",
+        "FFTAnalyser": "readonly",
+        "GUIOverlay": "readonly",
+        "MouseListener": "readonly"
     }
 }

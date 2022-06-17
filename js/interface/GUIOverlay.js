@@ -1,6 +1,6 @@
 document.addEventListener('contextmenu', (event) => event.preventDefault()); // stop the rightclick menu from showing
 
-class _GUI { // eslint-disable-line no-unused-vars
+class GUIOverlay { // eslint-disable-line no-unused-vars
   constructor(audioSystem, container = window) {
     this.container = container;
     this.audioSystem = audioSystem;
@@ -9,7 +9,7 @@ class _GUI { // eslint-disable-line no-unused-vars
     this.viewPortRight = this.canvas.width - this.spec.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.ctx = this.canvas.getContext('2d');
-    this.mouse = new _mouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
+    this.mouse = new MouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
     this.ruler = [{ x: 0, y: 0, active: false }];
     this.pitchAlert = parseInt(pitchFloorAlert.content, 10);
   }
