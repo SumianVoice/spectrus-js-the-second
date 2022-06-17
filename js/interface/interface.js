@@ -3,10 +3,9 @@
 document.addEventListener('contextmenu', event => event.preventDefault()); // stop the rightclick menu from showing
 
 class _GUI {
-  constructor(spec, container=window) {
+  constructor(audioSystem, container=window) {
     this.container = container;
-    this.spec = spec;
-    this.canvas = div.appendChild(document.createElement('canvas'));
+    this.audioSystem = audioSystem;
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.viewPortRight = this.canvas.width - this.spec.scaleWidth;
@@ -16,6 +15,15 @@ class _GUI {
     this.ruler = [{x:0,y:0,active:false}];
     this.pitchAlert = parseInt(pitchFloorAlert.content);
   }
+
+  get canvas() {
+    return this.audioSystem.guiCanvas;
+  }
+
+  get spec() {
+    return this.audioSystem.spec;
+  }
+
   mouseDown(event) {
     if (event.button === 2) {
       if (this.ruler[0].active === true) {
