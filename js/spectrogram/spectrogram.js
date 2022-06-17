@@ -1,5 +1,5 @@
 function getBaseLog(number, base) {
-  return Math.round(Math.log(number) / Math.log(base) * 1000000000) / 1000000000;
+  return Math.round((Math.log(number) / Math.log(base)) * 1000000000) / 1000000000;
 }
 
 function unBaseLog(answer, base) {
@@ -275,7 +275,9 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       const formants = getFormants(movAvgPeaks, this.track.formantCount);
       // console.log(formants);
       for (let i = 0; i < this.track.formantCount; i++) {
+        // eslint-disable-next-line prefer-destructuring
         this.f[i + 1].index = formants[i][0]; // skip 0
+        // eslint-disable-next-line prefer-destructuring
         this.f[i + 1].amp = formants[i][1]; // skip 0
         this.f[i + 1].active = true; // skip 0
         this.plot(
@@ -334,7 +336,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
 
     // ========= notes scale =========
     let tmpHZ;
-    this.ctx.font = `${10}px ` + 'Mono';
+    this.ctx.font = `${10}px Mono`;
     for (let i = 0; i < 12; i++) {
       // A0-A9 note
       tmpHZ = getNoteHz(`C${i}`);

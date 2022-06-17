@@ -11,7 +11,7 @@ class _GUI { // eslint-disable-line no-unused-vars
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new _mouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
     this.ruler = [{ x: 0, y: 0, active: false }];
-    this.pitchAlert = parseInt(pitchFloorAlert.content);
+    this.pitchAlert = parseInt(pitchFloorAlert.content, 10);
   }
 
   get canvas() {
@@ -171,7 +171,7 @@ class _GUI { // eslint-disable-line no-unused-vars
 
   update() {
     this.updateScale();
-    this.pitchAlert = parseInt(pitchFloorAlert.content); // update the pitch alert
+    this.pitchAlert = parseInt(pitchFloorAlert.content, 10); // update the pitch alert
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);
     }
