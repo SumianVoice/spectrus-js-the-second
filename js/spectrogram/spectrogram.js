@@ -138,8 +138,7 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
       let movAvg = this.movingAverage(data, 20);
       movAvg = this.movingAverage(movAvg, 10);
       const movAvgPeaks = this.getPeaks(movAvg, 6, 1);
-      let formants;
-      formants = this.getFormants(movAvgPeaks, this.track.formantCount);
+      const formants = this.getFormants(movAvgPeaks, this.track.formantCount);
       // console.log(formants);
       for (let i = 0; i < this.track.formantCount; i++) {
         this.f[i + 1].index = formants[i][0]; // skip 0
@@ -393,22 +392,21 @@ class _SPECTROGRAM { // eslint-disable-line no-unused-vars
     for (let i = 0; i < formantCount; i++) {
       newFormants.push([0, 0, 0]);
     }
-    const highestPeak = 0;
+    // const highestPeak = 0;
     // for (var i = 1; i < array.length; i++) {
     //   if (array[i][1] > highestPeak) {
     //     highestPeak = array[i][1]
     //   }
     // }
-    const minAmp = highestPeak;
     let avgPos = 0;
-    let avgAmp = 0;
+    // let avgAmp = 0;
     let totalDiv = 0;
     const tmpExp = 40;
     for (let i = 1; i < array.length - 1; i++) {
       // only look at the third formant back
       if (array[i][1] > newFormants[0][1]) {
         if (array[i - 1][1] < array[i][1] && array[i][1] > array[i + 1][1]) {
-          avgAmp = (array[i][1] + array[i - 1][1] + array[i + 1][1]) / 3;
+          // avgAmp = (array[i][1] + array[i - 1][1] + array[i + 1][1]) / 3;
           avgPos = 0;
           totalDiv = 0;
           for (let l = -1; l < 2; l++) {
