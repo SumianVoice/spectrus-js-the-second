@@ -1,4 +1,4 @@
-class _mouseListener {
+class _mouseListener { // eslint-disable-line no-unused-vars
   constructor(mousedownFunc, mouseupFunc) {
     this.keys = [];
     this.x = 0;

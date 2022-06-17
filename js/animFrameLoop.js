@@ -3,7 +3,7 @@ let startTime; let
 let callback;
 let dt;
 
-function animFrameLoop(timestamp) {
+function animFrameLoop(timestamp) { // eslint-disable-line no-unused-vars
   if (startTime === undefined) {
     startTime = timestamp;
     previousTimeStamp = timestamp;
@@ -16,7 +16,7 @@ function animFrameLoop(timestamp) {
   window.requestAnimationFrame(animFrameLoop);
 }
 
-function startLoop(callFunc) {
+function startLoop(callFunc) { // eslint-disable-line no-unused-vars
   callback = callFunc;
   window.requestAnimationFrame(animFrameLoop);
 }

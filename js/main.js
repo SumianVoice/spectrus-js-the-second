@@ -3,7 +3,7 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then(initialise).catch(cons
 
 let audioSystem;
 
-function initialise(stream) {
+function initialise(stream) { // eslint-disable-line no-unused-vars
   audioSystem = new AudioSystem(document.querySelector('#div'), stream);
   startLoop(audioSystem.update.bind(audioSystem));
 }

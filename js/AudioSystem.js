@@ -1,4 +1,4 @@
-class AudioSystem {
+class AudioSystem { // eslint-disable-line no-unused-vars
   constructor(div, audioStream) {
     this.div = div;
     this.audioStream = audioStream;

@@ -11,5 +11,17 @@
     },
     "rules": {
         "no-plusplus": "off"
+    },
+    "globals": {
+        "animFrameLoop": "readonly",
+        "startLoop": "readonly",
+        "noteFreqTable": "readonly",
+        "colormap": "readonly",
+        "initialise": "readonly",
+        "AudioSystem": "readonly",
+        "_SPECTROGRAM": "readonly",
+        "_fftData": "readonly",
+        "_GUI": "readonly",
+        "_mouseListener": "readonly"
     }
 }

@@ -1,4 +1,4 @@
-const colormap = {
+const colormap = { // eslint-disable-line no-unused-vars
   magma: [[0.001462, 0.000466, 0.013866],
     [0.002258, 0.001295, 0.018331],
     [0.003279, 0.002305, 0.023708],

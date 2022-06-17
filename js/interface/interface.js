@@ -1,6 +1,6 @@
 document.addEventListener('contextmenu', (event) => event.preventDefault()); // stop the rightclick menu from showing
 
-class _GUI {
+class _GUI { // eslint-disable-line no-unused-vars
   constructor(audioSystem, container = window) {
     this.container = container;
     this.audioSystem = audioSystem;

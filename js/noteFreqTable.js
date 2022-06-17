@@ -1,4 +1,4 @@
-const noteFreqTable = {
+const noteFreqTable = { // eslint-disable-line no-unused-vars
   C0: 16.351,
   'C#0': 17.324,
   D0: 18.354,
