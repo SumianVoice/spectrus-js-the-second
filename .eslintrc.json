@@ -20,6 +20,7 @@
         "getNoteHz": "readonly",
         "lookupNote": "readonly",
         "initialise": "readonly",
+        "audioSystem": "readonly",
         "AudioSystem": "readonly",
         "_SPECTROGRAM": "readonly",
         "_fftData": "readonly",
