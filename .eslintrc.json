@@ -26,6 +26,6 @@
         "Spectrogram": "readonly",
         "FFTAnalyser": "readonly",
         "GUIOverlay": "readonly",
-        "_mouseListener": "readonly"
+        "MouseListener": "readonly"
     }
 }
