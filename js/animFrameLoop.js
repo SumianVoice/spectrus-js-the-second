@@ -1,5 +1,5 @@
-let startTime; let
-  previousTimeStamp;
+let startTime;
+let previousTimeStamp;
 let callback;
 
 function animFrameLoop(timestamp) { // eslint-disable-line no-unused-vars
