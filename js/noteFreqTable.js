@@ -128,12 +128,16 @@ function getNoteHz(note) { // eslint-disable-line no-unused-vars
 function lookupNote(hz) { // eslint-disable-line no-unused-vars
   let prevKey = 0;
   for (var key in noteFreqTable) {
+    // only look at keys that are bigger, then if you go too far, use the previous one
     if (noteFreqTable[key] > hz) {
+      // is this key closer than the previous?
       if (Math.abs(noteFreqTable[key] - hz) <
           Math.abs(noteFreqTable[prevKey] - hz) && prevKey) {
+        // if the inaccuracy of this key is less than the previous, return this key
         return key;
       }
       else {
+        // if it's gone too far and the previous key was more accurate, use that one instead
         return prevKey;
       }
     }
