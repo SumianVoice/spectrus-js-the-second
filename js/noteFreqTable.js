@@ -121,22 +121,21 @@ const noteFreqTable = {
 'A#9':14917.24,
 'B9':15804.264,
 }
-/* eslint-enable */
 function getNoteHz(note) { // eslint-disable-line no-unused-vars
   return noteFreqTable[note];
 }
+// don't enable lint on this, because it doesn't take into account returns. It thinks it will loop through the whole array, but it will return and break the loop before then.
 function lookupNote(hz) { // eslint-disable-line no-unused-vars
   let prevKey = 0;
   for (var key in noteFreqTable) {
     // only look at keys that are bigger, then if you go too far, use the previous one
     if (noteFreqTable[key] > hz) {
       // is this key closer than the previous?
-      if (Math.abs(noteFreqTable[key] - hz) <
-          Math.abs(noteFreqTable[prevKey] - hz) && prevKey) {
+      if (Math.abs(noteFreqTable[key] - hz)
+          < Math.abs(noteFreqTable[prevKey] - hz) && prevKey) {
         // if the inaccuracy of this key is less than the previous, return this key
         return key;
-      }
-      else {
+      } else {
         // if it's gone too far and the previous key was more accurate, use that one instead
         return prevKey;
       }
@@ -145,3 +144,4 @@ function lookupNote(hz) { // eslint-disable-line no-unused-vars
   }
   return false;
 }
+/* eslint-enable */
