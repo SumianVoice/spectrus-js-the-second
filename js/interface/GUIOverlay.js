@@ -11,9 +11,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new MouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
     this.ruler = [{ x: 0, y: 0, active: false }];
-    // TODO: remove this next line when pitchFloorAlert is implemented properly
-    // eslint-disable-next-line no-undef
-    this.pitchAlert = parseInt(pitchFloorAlert.value, 10);
+    this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
+    this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
   }
 
@@ -27,8 +26,9 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   pitchAlertTest() {
     const fundamentalHz = this.audioSystem.spec.hzFromIndex(this.audioSystem.spec.f[0]);
-    if(this.audioSystem.spec.track.fundamentalAmp < this.audioSystem.spec.track.fundamentalMinAmp) {return}
-    this.pitchAlert = parseInt(pitchFloorAlert.value);
+    if (this.audioSystem.spec.track.fundamentalAmp
+    < this.audioSystem.spec.track.fundamentalMinAmp) { return; }
+    this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     if (fundamentalHz < this.pitchAlert) {
       if ((!this.alertSound.duration > 0 || this.alertSound.paused)) {
         this.alertSound.play();
@@ -120,14 +120,14 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx.fillStyle = '#11111150'; // background for the reading
     this.ctx.fillRect(x + 1, y + 1, 100, 70);
     this.renderText(`${Math.floor(this.spec.hzFromY(y))}Hz`, x + 10, y + 20, color, '20px', 'Mono');
-    // this.renderText(
-    //   `${Math.round(((this.viewPortRight-x)/this.spec.speed)*10)/10}s`,
-    //   x + 10,
-    //   y + 100,
-    //   "#ffffaa",
-    //   "20px",
-    //   "Mono"
-    // ); // show time, but it's broken?
+    this.renderText(
+      `~${Math.round(((this.viewPortRight - x) / this.spec.speed) * 10) / 10}s`,
+      x + 10,
+      y + 100,
+      '#ffffaa',
+      '20px',
+      'Mono',
+    ); // show time, but it's broken?
 
     // note render
     const tmpNote = lookupNote(this.spec.hzFromY(y)); // get the note at this position
@@ -185,8 +185,6 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   update() {
     this.updateScale();
-    // TODO: remove this next line when pitchFloorAlert is implemented properly
-    // eslint-disable-next-line no-undef
     this.pitchAlertTest();
 
     if (this.mouse.keys.includes(0)) { // when press LMB
