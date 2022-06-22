@@ -13,7 +13,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ruler = [{ x: 0, y: 0, active: false }];
     // TODO: remove this next line when pitchFloorAlert is implemented properly
     // eslint-disable-next-line no-undef
-    this.pitchAlert = parseInt(pitchFloorAlert.content, 10);
+    this.pitchAlert = parseInt(pitchFloorAlert.value, 10);
+    this.alertSound = new Audio('audio/alert.mp3');
   }
 
   get canvas() {
@@ -22,6 +23,18 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   get spec() {
     return this.audioSystem.spec;
+  }
+
+  pitchAlertTest() {
+    const fundamentalHz = this.audioSystem.spec.hzFromIndex(this.audioSystem.spec.f[0]);
+    if(this.audioSystem.spec.track.fundamentalAmp < this.audioSystem.spec.track.fundamentalMinAmp) {return}
+    this.pitchAlert = parseInt(pitchFloorAlert.value);
+    if (fundamentalHz < this.pitchAlert) {
+      if ((!this.alertSound.duration > 0 || this.alertSound.paused)) {
+        this.alertSound.play();
+        this.alertSound.currentTime = 0;
+      }
+    }
   }
 
   mouseDown(event) {
@@ -38,8 +51,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     //
   } // should be replaced with a better system which I can't remember the name of
 
-  // get the scale of the canvas.
-  // That is, how much do I need to multiply by to fill the screen from the fft.data
+  // get the size of the canvas
   updateScale() {
     if (
       (this.canvas.width !== this.container.innerWidth)
@@ -175,7 +187,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.updateScale();
     // TODO: remove this next line when pitchFloorAlert is implemented properly
     // eslint-disable-next-line no-undef
-    this.pitchAlert = parseInt(pitchFloorAlert.content, 10); // update the pitch alert
+    this.pitchAlertTest();
+
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);
     }

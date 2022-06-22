@@ -23,7 +23,9 @@
         <span></span>
         <button type="button" name="button" onclick="audioSystem.spec.trackFormantToggle();" id="trackFormantToggle">formant tracking</button>
         <button type="button" name="button" onclick="audioSystem.spec.scaleModeToggle();" id="scaleModeToggle">scale<br>mode</button>
-        <input id="pitchFloorAlert" type="number" name="" value="0" title="minimum pitch alert">
+        <div class="">
+          <input id="pitchFloorAlert" type="number" name="" value="0" title="minimum pitch alert">
+        </div>
         <!--  -->
       </div>
     </div>
@@ -35,6 +37,7 @@
     <script src="js/spectrogram/Spectrogram.js" charset="utf-8"></script>
     <script src="js/interface/GUIOverlay.js" charset="utf-8"></script>
     <script src="js/AudioSystem.js" charset="utf-8"></script>
+    <script src="js/interface/pitchNotify.js" charset="utf-8"></script>
     <script src="js/main.js" charset="utf-8"></script>
   </body>
 </html>
