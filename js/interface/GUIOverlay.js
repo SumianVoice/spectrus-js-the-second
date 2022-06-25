@@ -139,7 +139,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
         `${tmpNote}`,
         x + 10,
         y + 40,
-        `${color}50`,
+        `${color}80`,
         '20px',
         'Mono',
       );

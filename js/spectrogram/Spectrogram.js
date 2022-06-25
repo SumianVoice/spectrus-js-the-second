@@ -337,7 +337,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
     // ========= notes scale =========
     let tmpHZ;
-    this.ctx.font = `${10}px Mono`;
+    this.ctx.font = `${12}px Mono`;
     const A1 = 55;
     for (let i = -1; i < 12; i++) {
       // A0-A9 note
