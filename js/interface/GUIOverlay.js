@@ -131,7 +131,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     ); // show time, but it's broken?
 
     // note render
-    const tmpNote = lookupNote(this.spec.hzFromY(y), this.notationType); // get the note at this position
+    // get the note at this position
+    const tmpNote = lookupNote(this.spec.hzFromY(y), this.notationType);
     if (tmpNote != '0') { // eslint-disable-line eqeqeq
       // show the note
       this.renderText(
