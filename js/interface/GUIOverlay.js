@@ -155,9 +155,9 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     }
   }
 
-  trackPitch() {
+  trackPitch() { // eslint-disable-line consistent-return
     this.spec.update();
-    if (!(this.spec.f[0] > 0)) { return false; }
+    if (!(this.spec.f[0] > 0)) { return; }
     let tmpColor = '#ffff4480';
     if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
       tmpColor = '#22ff55';
