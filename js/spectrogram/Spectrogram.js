@@ -148,7 +148,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;
-    this.notationType = 'experimental';
+    this.notationType = 'musical';
     this.track = {
       fundamental: false,
       formants: false,
@@ -516,5 +516,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   notationToggle() {
     this.notationType = this.notationType === 'experimental' ? 'musical' : 'experimental';
+    this.updateScale();
+    this.drawScale();
   }
 }
