@@ -14,6 +14,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
+    this.notationType = noteFreqTable;
   }
 
   get canvas() {
