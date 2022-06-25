@@ -14,7 +14,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
-    this.notationType = noteFreqTable;
+    this.notationType = 'experimental';
   }
 
   get canvas() {
@@ -131,7 +131,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     ); // show time, but it's broken?
 
     // note render
-    const tmpNote = lookupNote(this.spec.hzFromY(y)); // get the note at this position
+    const tmpNote = lookupNote(this.spec.hzFromY(y), this.notationType); // get the note at this position
     if (tmpNote != '0') { // eslint-disable-line eqeqeq
       // show the note
       this.renderText(
@@ -144,7 +144,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       );
       // show the hz of that note
       this.renderText(
-        `${Math.round(getNoteHz(tmpNote))}Hz`,
+        `${Math.round(getNoteHz(tmpNote), this.notationType)}Hz`,
         x + 10,
         y + 60,
         `${color}50`,
