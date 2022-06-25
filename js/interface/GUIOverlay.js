@@ -14,6 +14,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
+    this.notationType = 'musical';
   }
 
   get canvas() {
@@ -130,7 +131,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     ); // show time, but it's broken?
 
     // note render
-    const tmpNote = lookupNote(this.spec.hzFromY(y)); // get the note at this position
+    // get the note at this position
+    const tmpNote = lookupNote(this.spec.hzFromY(y), this.notationType);
     if (tmpNote != '0') { // eslint-disable-line eqeqeq
       // show the note
       this.renderText(
@@ -143,7 +145,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       );
       // show the hz of that note
       this.renderText(
-        `${Math.round(getNoteHz(tmpNote))}Hz`,
+        `${Math.round(getNoteHz(tmpNote, this.notationType))}Hz`,
         x + 10,
         y + 60,
         `${color}50`,
@@ -153,12 +155,14 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     }
   }
 
-  trackPitch() {
+  trackPitch() { // eslint-disable-line consistent-return
+    this.spec.update();
+    if (!(this.spec.f[0] > 0)) { return; }
     let tmpColor = '#ffff4480';
     if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
       tmpColor = '#22ff55';
     }
-    this.spec.update();
+    const F0hz = Math.floor(this.spec.hzFromIndex(this.spec.f[0]));
     this.ctx.fillStyle = '#111';
     this.ctx.fillRect(
       this.spec.viewPortRight,
@@ -181,11 +185,30 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       '20px',
       'Mono',
     );
+    // show the hz and note on the bottom of the screen
+    this.renderText(
+      `${lookupNote(F0hz, this.notationType)}`,
+      10,
+      this.spec.viewPortBottom - 40,
+      tmpColor,
+      '20px',
+      'Mono',
+    );
+    this.renderText(
+      `${F0hz}Hz`,
+      10,
+      this.spec.viewPortBottom - 10,
+      tmpColor,
+      '20px',
+      'Mono',
+    );
   }
 
   update() {
     this.updateScale();
     this.pitchAlertTest();
+
+    this.notationType = this.audioSystem.spec.notationType;
 
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);

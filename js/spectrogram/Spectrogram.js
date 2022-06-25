@@ -148,6 +148,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;
+    this.notationType = 'musical';
     this.track = {
       fundamental: false,
       formants: false,
@@ -337,9 +338,10 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     // ========= notes scale =========
     let tmpHZ;
     this.ctx.font = `${10}px Mono`;
-    for (let i = 0; i < 12; i++) {
+    const A1 = 55;
+    for (let i = -1; i < 12; i++) {
       // A0-A9 note
-      tmpHZ = getNoteHz(`C${i}`);
+      tmpHZ = (A1 * (2 ** i));
       this.ctx.fillStyle = '#aa99ff33'; // set color
       this.ctx.fillRect(
         this.canvas.width - this.scaleWidth,
@@ -356,8 +358,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       );
       // this.ctx.fillStyle = `#a9f`; // set color
       this.ctx.fillText(
-        `${`C${i}`}`,
-        this.canvas.width - this.scaleWidth + 80,
+        lookupNote(tmpHZ, this.notationType),
+        this.canvas.width - this.scaleWidth + 70,
         this.yFromIndex(this.indexFromHz(tmpHZ)),
       );
     }
@@ -510,5 +512,11 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   pauseToggle() {
     this.pause = !this.pause;
+  }
+
+  notationToggle() {
+    this.notationType = this.notationType === 'experimental' ? 'musical' : 'experimental';
+    this.updateScale();
+    this.drawScale();
   }
 }
