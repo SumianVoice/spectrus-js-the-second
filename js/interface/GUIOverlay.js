@@ -156,11 +156,13 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   }
 
   trackPitch() {
+    this.spec.update();
+    if (!(this.spec.f[0] > 0)) { return false; }
     let tmpColor = '#ffff4480';
     if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
       tmpColor = '#22ff55';
     }
-    this.spec.update();
+    const F0hz = Math.floor(this.spec.hzFromIndex(this.spec.f[0]));
     this.ctx.fillStyle = '#111';
     this.ctx.fillRect(
       this.spec.viewPortRight,
@@ -179,6 +181,23 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       `${Math.floor(this.spec.hzFromIndex(this.spec.f[0]))}Hz`,
       this.spec.viewPortRight + 20,
       this.spec.yFromIndex(this.spec.f[0]) + 5,
+      tmpColor,
+      '20px',
+      'Mono',
+    );
+    // show the hz and note on the bottom of the screen
+    this.renderText(
+      `${lookupNote(F0hz, this.notationType)}`,
+      10,
+      this.spec.viewPortBottom - 40,
+      tmpColor,
+      '20px',
+      'Mono',
+    );
+    this.renderText(
+      `${F0hz}Hz`,
+      10,
+      this.spec.viewPortBottom - 10,
       tmpColor,
       '20px',
       'Mono',
