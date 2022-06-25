@@ -359,7 +359,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       // this.ctx.fillStyle = `#a9f`; // set color
       this.ctx.fillText(
         lookupNote(tmpHZ, this.notationType),
-        this.canvas.width - this.scaleWidth + 80,
+        this.canvas.width - this.scaleWidth + 70,
         this.yFromIndex(this.indexFromHz(tmpHZ)),
       );
     }

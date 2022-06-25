@@ -14,7 +14,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
-    this.notationType = 'experimental';
+    this.notationType = 'musical';
   }
 
   get canvas() {
@@ -187,6 +187,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   update() {
     this.updateScale();
     this.pitchAlertTest();
+
+    this.notationType = this.audioSystem.spec.notationType;
 
     if (this.mouse.keys.includes(0)) { // when press LMB
       this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);
