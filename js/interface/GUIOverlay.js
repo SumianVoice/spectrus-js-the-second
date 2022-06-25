@@ -144,7 +144,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       );
       // show the hz of that note
       this.renderText(
-        `${Math.round(getNoteHz(tmpNote), this.notationType)}Hz`,
+        `${Math.round(getNoteHz(tmpNote, this.notationType))}Hz`,
         x + 10,
         y + 60,
         `${color}50`,

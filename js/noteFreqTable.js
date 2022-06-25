@@ -247,8 +247,7 @@ const noteFreqTable = {
 }
 
 function getNoteHz(note, notation = 'musical') { // eslint-disable-line no-unused-vars
-  const lookupTable = noteFreqTable[notation];
-  return lookupTable[note];
+  return noteFreqTable[notation][note];
 }
 // don't enable lint on this, because it doesn't take into account returns. It thinks it will loop through the whole array, but it will return and break the loop before then.
 function lookupNote(hz, notation = 'musical') { // eslint-disable-line no-unused-vars
