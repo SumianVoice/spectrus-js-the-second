@@ -15,6 +15,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
     this.notationType = 'musical';
+    this.show_cursor_harmonics = false;
   }
 
   get canvas() {
@@ -84,7 +85,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ruler[0].active = false;
   }
 
-  drawRuler(x, y, color, width = 1, fullWidth = true) {
+  drawRuler(x, y, color, width = 1, fullWidth = true, harmonics = true) {
     // draw vert line
     this.ctx.lineWidth = width;
     this.ctx.strokeStyle = '#ffffff10';
@@ -117,6 +118,18 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx.lineTo(this.canvas.width, y);
     this.ctx.stroke();
 
+    // draw harmonics
+    if (harmonics === true) {
+      for (let i = 2; i < 20; i++) {
+        let hzy = i * this.spec.hzFromY(y)
+        let posy = this.spec.yFromHz(hzy)
+        this.ctx.fillStyle = "#11111144";
+        this.ctx.fillRect(x - 30, posy - 1, 32, 4);
+        this.ctx.fillStyle = color + "80";
+        this.ctx.fillRect(x - 30 + 1, posy, 30, 2);
+      }
+    }
+
     // Hz render
     this.ctx.fillStyle = '#11111150'; // background for the reading
     this.ctx.fillRect(x + 1, y + 1, 100, 70);
@@ -144,8 +157,14 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
         'Mono',
       );
       // show the hz of that note
+      let notehz = getNoteHz(tmpNote, this.notationType)
+      let notey = this.spec.yFromHz(notehz)
+      // this.ctx.fillStyle = "#11111144";
+      // this.ctx.fillRect(x - 50 - 1, notey - 1, 14, 4);
+      // this.ctx.fillStyle = "#66aaff";
+      // this.ctx.fillRect(x - 50 + 1, notey, 10, 2);
       this.renderText(
-        `${Math.round(getNoteHz(tmpNote, this.notationType))}Hz`,
+        `${Math.round(notehz)}Hz`,
         x + 10,
         y + 60,
         `${color}50`,
@@ -204,6 +223,10 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     );
   }
 
+  harmonicstoggle() {
+    this.show_cursor_harmonics = !this.show_cursor_harmonics
+  }
+
   update() {
     this.updateScale();
     this.pitchAlertTest();
@@ -211,11 +234,11 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.notationType = this.audioSystem.spec.notationType;
 
     if (this.mouse.keys.includes(0)) { // when press LMB
-      this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2);
+      this.drawRuler(this.mouse.x, this.mouse.y, '#ffff44', 2, true, this.show_cursor_harmonics);
     }
     for (let i = 0; i < this.ruler.length; i++) {
       if (this.ruler[i].active === true) {
-        this.drawRuler(this.ruler[i].x, this.ruler[i].y, '#ffaaff', 2);
+        this.drawRuler(this.ruler[i].x, this.ruler[i].y, '#ffaaff', 2, true, this.show_cursor_harmonics);
       }
     }
     this.trackPitch();
