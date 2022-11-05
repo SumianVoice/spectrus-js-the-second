@@ -120,13 +120,15 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
     // draw harmonics
     if (harmonics === true) {
+      let hwidth = 150;
+      let hoffset = 50;
       for (let i = 2; i < 20; i++) {
         let hzy = i * this.spec.hzFromY(y)
         let posy = this.spec.yFromHz(hzy)
         this.ctx.fillStyle = "#11111144";
-        this.ctx.fillRect(x - 30, posy - 1, 32, 4);
+        this.ctx.fillRect(x - hwidth + hoffset + 0, posy - 1, hwidth + 2, 2 + 2);
         this.ctx.fillStyle = color + "80";
-        this.ctx.fillRect(x - 30 + 1, posy, 30, 2);
+        this.ctx.fillRect(x - hwidth + hoffset + 1, posy,     hwidth,     2);
       }
     }
 
