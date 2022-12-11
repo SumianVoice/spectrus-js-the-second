@@ -56,8 +56,6 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
 
     if (k >= segmentStart + segmentSize) { // when you get to the end of the segment
       peaks.push([tmpPeakIndex, tmpPeakValue]);
-      // peaks[curSegment][0] = tmpPeakIndex;
-      // peaks[curSegment][1] = tmpPeakValue;
 
       segmentSize = unBaseLog(logPeaksScale, curSegment) * baseSegmentSize;
       segmentStart = k;
@@ -65,8 +63,7 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
       tmpPeakValue = 0;
     }
   }
-  // console.log(peaks);
-  // console.log(segmentSize);
+
   return peaks;
 }
 
@@ -75,21 +72,13 @@ function getFormants(array, formantCount = 3) {
   for (let i = 0; i < formantCount; i++) {
     newFormants.push([0, 0, 0]);
   }
-  // const highestPeak = 0;
-  // for (var i = 1; i < array.length; i++) {
-  //   if (array[i][1] > highestPeak) {
-  //     highestPeak = array[i][1]
-  //   }
-  // }
+  
   let avgPos = 0;
-  // let avgAmp = 0;
   let totalDiv = 0;
   const tmpExp = 40;
   for (let i = 1; i < array.length - 1; i++) {
-    // only look at the third formant back
     if (array[i][1] > newFormants[0][1]) {
       if (array[i - 1][1] < array[i][1] && array[i][1] > array[i + 1][1]) {
-        // avgAmp = (array[i][1] + array[i - 1][1] + array[i + 1][1]) / 3;
         avgPos = 0;
         totalDiv = 0;
         for (let l = -1; l < 2; l++) {
@@ -98,31 +87,11 @@ function getFormants(array, formantCount = 3) {
         }
         avgPos /= totalDiv;
         newFormants.shift();
-        // newFormants.push(array[i]);
-        // newFormants.push([array[i][0],avgAmp]);
         newFormants.push([avgPos, array[i][1], 1]);
       }
     }
   }
 
-  // let currentPeak = [0,0];
-  // for (var i = 1; i < array.length; i++) {
-  //   // only look above threshold
-  //   if (array[i][1] > minAmp) {
-  //     // look for peaks
-  //     if (array[i][1] > currentPeak[1]) {
-  //       currentPeak = array[i];
-  //     }
-  //     else if (array[i][1] < currentPeak[1]*0.3) {
-  //       newFormants.shift();
-  //       newFormants.push(currentPeak);
-  //     }
-  //   }
-  //   // else if (currentPeakIndex > 0) {
-  //   //   return {"index" : currentPeakIndex, "amplitude" : currentPeakAmplitude};
-  //   // }
-  // }
-  //
   return newFormants;
 }
 
@@ -235,8 +204,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   // draws the spectrogram from data
   scrollCanvas(width) {
     if (this.pause) return;
-    // Move the canvas across a bit to scroll
-    // this.ctx.translate(-width, 0);
     // Draw the canvas to the side
     this.ctx.drawImage(
       this.canvas,
@@ -249,8 +216,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       this.canvas.width - this.scaleWidth,
       this.canvas.height,
     );
-    // Reset the transformation matrix.
-    // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   plotFormants(data, dt) {
@@ -394,11 +359,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 5, 1);
-        // this.renderText(
-        //   Math.floor(i*tmpStepDist),
-        //   this.viewPortRight,
-        //   this.yFromHz(i*tmpStepDist) - 5, "#444", "15px"
-        // );
       }
       tmpStepDist = 500; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
@@ -417,9 +377,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   // takes index and returns its Hz value
   hzFromIndex(index) {
-    // this used to divide by 2, and that didn't work in this version but worked in the old version
-    // WHAT THE HECK - Sumi
-    // Hey Sumi: it's probably because sampleRate is twice fftSize, lol - hle0
     return (index / this.frequencyBinCount) * (this.sampleRate / 1);
   }
 
@@ -463,7 +420,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   getFundamental(array) {
     // get highest peak
     let highestPeak = 0;
-    // for (var i = 0; i < array.length; i++) { // slow version?
+    
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
     for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
       if (array[i] > highestPeak) {
