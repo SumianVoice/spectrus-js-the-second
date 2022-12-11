@@ -27,7 +27,7 @@ class AudioSystem { // eslint-disable-line no-unused-vars
   }
 
   /**
-   * 
+   * Re-calculates FFT and updates the UI.
    * @param {number} delta Time difference from last frame.
    * @returns {boolean} Success status of the update.
    */
@@ -36,14 +36,14 @@ class AudioSystem { // eslint-disable-line no-unused-vars
     if (delta === 0) { return false; }
 
     // Re-run FFT.
-    this.fft.update();    
+    this.fft.update();
 
     // Update average FPS.
-    this.avgFPS = ((1 / delta) + this.avgFPS * 19) / 20;  // Calculate average FPS.
+    this.avgFPS = ((1 / delta) + this.avgFPS * 19) / 20; // Calculate average FPS.
     this.gui.clear();
     this.gui.renderText(Math.floor(this.avgFPS), 10, 30, '#ffffff50', '20px', 'Mono');
     this.gui.update();
-    
+
     // Redraw spectrogram.
     this.spec.updateScale();
     this.spec.draw(this.fft.data, delta);
