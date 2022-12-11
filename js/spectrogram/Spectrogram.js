@@ -1,3 +1,14 @@
+const FORMANT_COLORS = [
+  '#fff', // f0
+  '#f3f', // f1
+  '#ff1', // f2
+  '#6ff', // f3
+  '#f22',
+  '#ff2',
+  '#2f2',
+  '#22f',
+];
+
 function getBaseLog(number, base) {
   return Math.round((Math.log(number) / Math.log(base)) * 1000000000) / 1000000000;
 }
@@ -68,11 +79,8 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
 }
 
 function getFormants(array, formantCount = 3) {
-  const newFormants = [[0, 0, 0]];
-  for (let i = 0; i < formantCount; i++) {
-    newFormants.push([0, 0, 0]);
-  }
-  
+  const newFormants = Array(formantCount + 1).fill([0, 0, 0]);
+
   let avgPos = 0;
   let totalDiv = 0;
   const tmpExp = 40;
@@ -97,16 +105,19 @@ function getFormants(array, formantCount = 3) {
 
 class Spectrogram { // eslint-disable-line no-unused-vars
   constructor(audioSystem, container = window) {
+    // Initialize audio variables.
     this.audioSystem = audioSystem;
-    this.container = container;
     this.sampleRate = this.fft.audioCtx.sampleRate;
     this.frequencyBinCount = this.fft.analyser.fftSize;
-    // by default creates a spectrogram canvas of the full size of the window
+
+    // Initialize container.
+    this.container = container;
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
-    this.pause = false;
     this.colormap = 'viridis';
+
+    // Initialize and draw scale.
     this.scaleWidth = 100;
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
@@ -118,6 +129,9 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleY = 1;
     this.speed = 100;
     this.notationType = 'musical';
+
+    // Configure spectrogram options.
+    this.pause = false;
     this.track = {
       fundamental: false,
       formants: false,
@@ -125,20 +139,12 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       fundamentalMinAmp: 150,
       fundamentalAmp: 0,
     };
-    this.f = [{ index: 0, amp: 0, active: false }]; // f0 f1 f2 etc
-    for (let i = 0; i < 4; i++) { // add empty slots
-      this.f.push({ index: 0, amp: 0, active: false });
-    }
-    this.formantColors = [
-      '#fff', // f0
-      '#f3f', // f1
-      '#ff1', // f2
-      '#6ff', // f3
-      '#f22',
-      '#ff2',
-      '#2f2',
-      '#22f',
-    ];
+
+    // Initialize variables for formant tracking.
+    this.f = Array(5).fill({ index: 0, amp: 0, active: false });
+    this.formantColors = FORMANT_COLORS;
+
+    // Draw the scale.
     this.clear();
     this.updateScale();
   }
@@ -420,7 +426,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   getFundamental(array) {
     // get highest peak
     let highestPeak = 0;
-    
+
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
     for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
       if (array[i] > highestPeak) {
