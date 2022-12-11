@@ -29,23 +29,27 @@ function getMoreAccurateFundamental(array, start) {
   return (total / div);
 }
 
+/**
+ * Calculate the moving average of each element in an array.
+ *
+ * @todo Check if loop should go from l = i - span to i + span + 1.
+ */
 function movingAverage(array, span, maxIndex = 1000) {
-  const newArray = new Array(Math.min(array.length, maxIndex));
-  let tmpCurAvg = 0;
-  let totalDiv = 0;
+  const output = new Array(Math.min(array.length, maxIndex));
+  let tmpCurAvg;
+  let totalDiv;
   for (let i = 0; i < Math.min(array.length, maxIndex); i++) {
-    totalDiv = 0;
     tmpCurAvg = 0;
+    totalDiv = 0;
     for (let l = i - span; l < i + span; l++) {
       if (l > 0 && l < Math.min(array.length, maxIndex)) {
         tmpCurAvg += array[l];
         totalDiv += 1;
       }
     }
-    // tmpCurAvg = (array[i] + tmpCurAvg*span) / (span+1);
-    newArray[i] = tmpCurAvg / totalDiv;
+    output[i] = tmpCurAvg / totalDiv;
   }
-  return newArray;
+  return output;
 }
 
 function getPeaks(array, baseSegmentSize, logPeaksScale) {
