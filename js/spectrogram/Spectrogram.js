@@ -172,10 +172,10 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   /**
    * Gets the scale for the canvas.
-   * 
+   *
    * This method calculates the scaling factor for the spectrogram and the scale/ruler, i.e, what
    * the fft.data values need to be multiplied by to fill the screen.
-   * 
+   *
    * @todo Check if this.scaleX is necessary.
    */
   updateScale() {
@@ -195,7 +195,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
     // Calculate scaling for the spectrogram.
     if (this.scaleMode === 'linear') {
-      this.scaleX = this.canvas.width / this.indexFromHz(this.specMax); // FIXME: 
+      this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
     } else if (this.scaleMode === 'log') {
       this.scaleX = this.canvas.width
