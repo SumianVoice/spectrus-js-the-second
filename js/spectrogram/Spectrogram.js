@@ -170,12 +170,20 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.getFundamental(this.fft.data);
   }
 
-  // get the scale of the canvas.
-  // That is, how much do I need to multiply by to fill the screen from the fft.data
+  /**
+   * Gets the scale for the canvas.
+   * 
+   * This method calculates the scaling factor for the spectrogram and the scale/ruler, i.e, what
+   * the fft.data values need to be multiplied by to fill the screen.
+   * 
+   * @todo Check if this.scaleX is necessary.
+   */
   updateScale() {
-    // If the canvas has resized, prepare to redraw.
+    // Check if the canvas has been resized and needs to be re-drawn.
     const reDraw = (this.canvas.width !== this.container.innerWidth)
     || (this.canvas.height !== this.container.innerHeight);
+
+    // If it needs to be re-drawn, calculate the new dimensions.
     if (reDraw) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
@@ -185,16 +193,18 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       this.viewPortBottom = this.canvas.height;
     }
 
+    // Calculate scaling for the spectrogram.
     if (this.scaleMode === 'linear') {
-      this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
+      this.scaleX = this.canvas.width / this.indexFromHz(this.specMax); // FIXME: 
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
     } else if (this.scaleMode === 'log') {
-      // const cutoff = getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
       this.scaleX = this.canvas.width
         / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.scaleY = this.canvas.height
         / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
     }
+
+    // Re-draw if necessary.
     if (reDraw) {
       this.clear();
       this.drawScale();
