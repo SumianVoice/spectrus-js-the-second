@@ -103,7 +103,6 @@ function getFormants(array, formantCount = 3) {
   return newFormants;
 }
 
-
 /** This class performs FFT and renders the spectrogram and the scale. */
 class Spectrogram { // eslint-disable-line no-unused-vars
   /**
@@ -177,7 +176,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     // If the canvas has resized, prepare to redraw.
     const reDraw = (this.canvas.width !== this.container.innerWidth)
     || (this.canvas.height !== this.container.innerHeight);
-    if (hasResized) {
+    if (reDraw) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = this.container.innerWidth;
