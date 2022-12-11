@@ -7,17 +7,15 @@ class AudioSystem { // eslint-disable-line no-unused-vars
    */
   constructor(div, audioStream) {
     // Initialize FFT.
-    this.audioStream = audioStream;
     this.fft = new FFTAnalyser();
-    this.fft.init(this.audioStream);
+    this.fft.init(audioStream);
 
     // Initialize FPS.
     this.avgFPS = 0;
 
     // Initialize canvases for the display.
-    this.div = div;
-    this.primaryCanvas = this.div.appendChild(document.createElement('canvas'));
-    this.guiCanvas = this.div.appendChild(document.createElement('canvas'));
+    this.primaryCanvas = div.appendChild(document.createElement('canvas'));
+    this.guiCanvas = div.appendChild(document.createElement('canvas'));
 
     // Initialize and draw Spectrogram and GUI overlay.
     this.spec = new Spectrogram(this);
