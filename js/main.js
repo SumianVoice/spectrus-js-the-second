@@ -9,7 +9,7 @@ function initialise(stream) { // eslint-disable-line no-unused-vars
 // eslint-disable-next-line no-console
 navigator.mediaDevices.getUserMedia({ audio: true }).then(initialise).catch(console.error);
 
-//  add spacebar to pause
+// Add keybind for pausing.
 const spaceBar = 32;
 window.onkeydown = (gfg) => {
   if (gfg.keyCode === spaceBar) {

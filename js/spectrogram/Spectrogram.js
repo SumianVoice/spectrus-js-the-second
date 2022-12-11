@@ -1,3 +1,14 @@
+const FORMANT_COLORS = [
+  '#fff', // f0
+  '#f3f', // f1
+  '#ff1', // f2
+  '#6ff', // f3
+  '#f22',
+  '#ff2',
+  '#2f2',
+  '#22f',
+];
+
 function getBaseLog(number, base) {
   return Math.round((Math.log(number) / Math.log(base)) * 1000000000) / 1000000000;
 }
@@ -18,23 +29,27 @@ function getMoreAccurateFundamental(array, start) {
   return (total / div);
 }
 
+/**
+ * Calculate the moving average of each element in an array.
+ *
+ * @todo Check if loop should go from l = i - span to i + span + 1.
+ */
 function movingAverage(array, span, maxIndex = 1000) {
-  const newArray = new Array(Math.min(array.length, maxIndex));
-  let tmpCurAvg = 0;
-  let totalDiv = 0;
+  const output = new Array(Math.min(array.length, maxIndex));
+  let tmpCurAvg;
+  let totalDiv;
   for (let i = 0; i < Math.min(array.length, maxIndex); i++) {
-    totalDiv = 0;
     tmpCurAvg = 0;
+    totalDiv = 0;
     for (let l = i - span; l < i + span; l++) {
       if (l > 0 && l < Math.min(array.length, maxIndex)) {
         tmpCurAvg += array[l];
         totalDiv += 1;
       }
     }
-    // tmpCurAvg = (array[i] + tmpCurAvg*span) / (span+1);
-    newArray[i] = tmpCurAvg / totalDiv;
+    output[i] = tmpCurAvg / totalDiv;
   }
-  return newArray;
+  return output;
 }
 
 function getPeaks(array, baseSegmentSize, logPeaksScale) {
@@ -56,8 +71,6 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
 
     if (k >= segmentStart + segmentSize) { // when you get to the end of the segment
       peaks.push([tmpPeakIndex, tmpPeakValue]);
-      // peaks[curSegment][0] = tmpPeakIndex;
-      // peaks[curSegment][1] = tmpPeakValue;
 
       segmentSize = unBaseLog(logPeaksScale, curSegment) * baseSegmentSize;
       segmentStart = k;
@@ -65,31 +78,19 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
       tmpPeakValue = 0;
     }
   }
-  // console.log(peaks);
-  // console.log(segmentSize);
+
   return peaks;
 }
 
 function getFormants(array, formantCount = 3) {
-  const newFormants = [[0, 0, 0]];
-  for (let i = 0; i < formantCount; i++) {
-    newFormants.push([0, 0, 0]);
-  }
-  // const highestPeak = 0;
-  // for (var i = 1; i < array.length; i++) {
-  //   if (array[i][1] > highestPeak) {
-  //     highestPeak = array[i][1]
-  //   }
-  // }
+  const newFormants = Array(formantCount + 1).fill([0, 0, 0]);
+
   let avgPos = 0;
-  // let avgAmp = 0;
   let totalDiv = 0;
   const tmpExp = 40;
   for (let i = 1; i < array.length - 1; i++) {
-    // only look at the third formant back
     if (array[i][1] > newFormants[0][1]) {
       if (array[i - 1][1] < array[i][1] && array[i][1] > array[i + 1][1]) {
-        // avgAmp = (array[i][1] + array[i - 1][1] + array[i + 1][1]) / 3;
         avgPos = 0;
         totalDiv = 0;
         for (let l = -1; l < 2; l++) {
@@ -98,46 +99,35 @@ function getFormants(array, formantCount = 3) {
         }
         avgPos /= totalDiv;
         newFormants.shift();
-        // newFormants.push(array[i]);
-        // newFormants.push([array[i][0],avgAmp]);
         newFormants.push([avgPos, array[i][1], 1]);
       }
     }
   }
 
-  // let currentPeak = [0,0];
-  // for (var i = 1; i < array.length; i++) {
-  //   // only look above threshold
-  //   if (array[i][1] > minAmp) {
-  //     // look for peaks
-  //     if (array[i][1] > currentPeak[1]) {
-  //       currentPeak = array[i];
-  //     }
-  //     else if (array[i][1] < currentPeak[1]*0.3) {
-  //       newFormants.shift();
-  //       newFormants.push(currentPeak);
-  //     }
-  //   }
-  //   // else if (currentPeakIndex > 0) {
-  //   //   return {"index" : currentPeakIndex, "amplitude" : currentPeakAmplitude};
-  //   // }
-  // }
-  //
   return newFormants;
 }
 
+/** This class performs FFT and renders the spectrogram and the scale. */
 class Spectrogram { // eslint-disable-line no-unused-vars
+  /**
+   * Saves variables, initializes dimensions and formants, and draws the scale.
+   * @param {AudioSystem} audioSystem A reference to the parent, used to access the FFT analyzer
+   * @param {Window} container The reference to the window, used to access dimensions for resizing.
+   */
   constructor(audioSystem, container = window) {
+    // Initialize audio variables.
     this.audioSystem = audioSystem;
-    this.container = container;
     this.sampleRate = this.fft.audioCtx.sampleRate;
     this.frequencyBinCount = this.fft.analyser.fftSize;
-    // by default creates a spectrogram canvas of the full size of the window
+
+    // Initialize container.
+    this.container = container;
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
     this.ctx = this.canvas.getContext('2d');
-    this.pause = false;
     this.colormap = 'viridis';
+
+    // Initialize and draw scale.
     this.scaleWidth = 100;
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
@@ -149,6 +139,9 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleY = 1;
     this.speed = 100;
     this.notationType = 'musical';
+
+    // Configure spectrogram options.
+    this.pause = false;
     this.track = {
       fundamental: false,
       formants: false,
@@ -156,28 +149,22 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       fundamentalMinAmp: 150,
       fundamentalAmp: 0,
     };
-    this.f = [{ index: 0, amp: 0, active: false }]; // f0 f1 f2 etc
-    for (let i = 0; i < 4; i++) { // add empty slots
-      this.f.push({ index: 0, amp: 0, active: false });
-    }
-    this.formantColors = [
-      '#fff', // f0
-      '#f3f', // f1
-      '#ff1', // f2
-      '#6ff', // f3
-      '#f22',
-      '#ff2',
-      '#2f2',
-      '#22f',
-    ];
+
+    // Initialize variables for formant tracking.
+    this.f = Array(5).fill({ index: 0, amp: 0, active: false });
+    this.formantColors = FORMANT_COLORS;
+
+    // Draw the scale.
     this.clear();
     this.updateScale();
   }
 
+  /** References the canvas. */
   get canvas() {
     return this.audioSystem.primaryCanvas;
   }
 
+  /** References the FFT analyzer. */
   get fft() {
     return this.audioSystem.fft;
   }
@@ -187,43 +174,54 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.getFundamental(this.fft.data);
   }
 
-  // get the scale of the canvas.
-  // That is, how much do I need to multiply by to fill the screen from the fft.data
+  /**
+   * Gets the scale for the canvas.
+   *
+   * This method calculates the scaling factor for the spectrogram and the scale/ruler, i.e, what
+   * the fft.data values need to be multiplied by to fill the screen.
+   *
+   * @todo Check if this.scaleX is necessary.
+   */
   updateScale() {
-    let reDraw = false;
-    if (
-      (this.canvas.width !== this.container.innerWidth)
-      || (this.canvas.height !== this.container.innerHeight)
-    ) {
+    // Check if the canvas has been resized and needs to be re-drawn.
+    const reDraw = (this.canvas.width !== this.container.innerWidth)
+    || (this.canvas.height !== this.container.innerHeight);
+
+    // If it needs to be re-drawn, calculate the new dimensions.
+    if (reDraw) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = this.container.innerWidth;
       this.canvas.height = this.container.innerHeight;
       this.viewPortRight = this.canvas.width - this.scaleWidth;
       this.viewPortBottom = this.canvas.height;
-      reDraw = true;
     }
+
+    // Calculate scaling for the spectrogram.
     if (this.scaleMode === 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
     } else if (this.scaleMode === 'log') {
-      // const cutoff = getBaseLog(Math.ceil(this.indexFromHz(this.specMin)) + 1);
       this.scaleX = this.canvas.width
         / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
       this.scaleY = this.canvas.height
         / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
     }
+
+    // Re-draw if necessary.
     if (reDraw) {
       this.clear();
       this.drawScale();
     }
   }
 
+  /** Clears the canvas. */
   clear() {
     this.ctx.fillStyle = this.getColor(0);
     this.ctx.fillRect(0, 0, this.canvas.width - this.scaleWidth, this.viewPortBottom);
   }
 
+  /** Returns pre-defined colors for formants. If unavailable, returns a grayscale color. */
   getColor(d) {
     if (colormap === undefined) { return `rbg(${d},${d},${d})`; }
     return (`rgb(
@@ -232,11 +230,9 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       ${colormap[this.colormap][d][2] * 255})`);
   }
 
-  // draws the spectrogram from data
+  /** Draws the spectrogram from available data. */
   scrollCanvas(width) {
     if (this.pause) return;
-    // Move the canvas across a bit to scroll
-    // this.ctx.translate(-width, 0);
     // Draw the canvas to the side
     this.ctx.drawImage(
       this.canvas,
@@ -249,8 +245,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       this.canvas.width - this.scaleWidth,
       this.canvas.height,
     );
-    // Reset the transformation matrix.
-    // this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   plotFormants(data, dt) {
@@ -394,11 +388,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
         this.ctx.fillStyle = '#555';
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 5, 1);
-        // this.renderText(
-        //   Math.floor(i*tmpStepDist),
-        //   this.viewPortRight,
-        //   this.yFromHz(i*tmpStepDist) - 5, "#444", "15px"
-        // );
       }
       tmpStepDist = 500; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
@@ -417,9 +406,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   // takes index and returns its Hz value
   hzFromIndex(index) {
-    // this used to divide by 2, and that didn't work in this version but worked in the old version
-    // WHAT THE HECK - Sumi
-    // Hey Sumi: it's probably because sampleRate is twice fftSize, lol - hle0
     return (index / this.frequencyBinCount) * (this.sampleRate / 1);
   }
 
@@ -463,7 +449,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   getFundamental(array) {
     // get highest peak
     let highestPeak = 0;
-    // for (var i = 0; i < array.length; i++) { // slow version?
+
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
     for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
       if (array[i] > highestPeak) {

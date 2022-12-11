@@ -1,36 +1,51 @@
+/** This class generates performs FFT and handles rendering for spectrogram and GUI overlay. */
 class AudioSystem { // eslint-disable-line no-unused-vars
+  /**
+   * Initializes the FFT Analyzer and the UI.
+   * @param {HTMLDivElement} div - The div element to render the key UI.
+   * @param {MediaStream} audioStream - The microphone audio stream.
+   */
   constructor(div, audioStream) {
-    this.div = div;
-    this.audioStream = audioStream;
+    // Initialize FFT.
+    this.fft = new FFTAnalyser();
+    this.fft.init(audioStream);
 
+    // Initialize FPS.
     this.avgFPS = 0;
 
-    this.fft = new FFTAnalyser();
-    this.fft.init(this.audioStream);
+    // Initialize canvases for the display.
+    this.primaryCanvas = div.appendChild(document.createElement('canvas'));
+    this.guiCanvas = div.appendChild(document.createElement('canvas'));
 
-    this.primaryCanvas = this.div.appendChild(document.createElement('canvas'));
-    this.guiCanvas = this.div.appendChild(document.createElement('canvas'));
-
+    // Initialize and draw Spectrogram and GUI overlay.
     this.spec = new Spectrogram(this);
     this.spec.updateScale();
     this.spec.drawScale();
-
     this.gui = new GUIOverlay(this);
   }
 
-  update(dt) {
-    if (dt === 0) { return false; } // don't continue if infinite fps
+  /**
+   * Re-calculates FFT and updates the UI.
+   * @param {number} delta Time difference from last frame.
+   * @returns {boolean} Success status of the update.
+   */
+  update(delta) {
+    // Abort update if no time has passed.
+    if (delta === 0) { return false; }
 
+    // Re-run FFT.
     this.fft.update();
-    this.gui.clear(); // clear the gui layer
-    // show FPS
-    this.avgFPS = ((1 / dt) + this.avgFPS * 19) / 20;
+
+    // Update average FPS.
+    this.avgFPS = ((1 / delta) + this.avgFPS * 19) / 20; // Calculate average FPS.
+    this.gui.clear();
     this.gui.renderText(Math.floor(this.avgFPS), 10, 30, '#ffffff50', '20px', 'Mono');
-    this.spec.updateScale();
-    // spec.drawScale();
-    // spec.clear();
-    this.spec.draw(this.fft.data, dt);
     this.gui.update();
+
+    // Redraw spectrogram.
+    this.spec.updateScale();
+    this.spec.draw(this.fft.data, delta);
+
     return true;
   }
 }
