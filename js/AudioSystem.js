@@ -2,7 +2,7 @@
 class AudioSystem { // eslint-disable-line no-unused-vars
   /**
    * Initializes the FFT Analyzer and the UI.
-   * @param {HTMLElement} div - The div element to render the key UI.
+   * @param {HTMLDivElement} div - The div element to render the key UI.
    * @param {MediaStream} audioStream - The microphone audio stream.
    */
   constructor(div, audioStream) {

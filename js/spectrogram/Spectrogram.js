@@ -103,7 +103,14 @@ function getFormants(array, formantCount = 3) {
   return newFormants;
 }
 
+
+/** This class performs FFT and renders the spectrogram and the scale. */
 class Spectrogram { // eslint-disable-line no-unused-vars
+  /**
+   * Saves variables, initializes dimensions and formants, and draws the scale.
+   * @param {AudioSystem} audioSystem A reference to the parent, used to access the FFT analyzer
+   * @param {Window} container The reference to the window, used to access dimensions for resizing.
+   */
   constructor(audioSystem, container = window) {
     // Initialize audio variables.
     this.audioSystem = audioSystem;
@@ -149,10 +156,12 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.updateScale();
   }
 
+  /** References the canvas. */
   get canvas() {
     return this.audioSystem.primaryCanvas;
   }
 
+  /** References the FFT analyzer. */
   get fft() {
     return this.audioSystem.fft;
   }
@@ -165,19 +174,18 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   // get the scale of the canvas.
   // That is, how much do I need to multiply by to fill the screen from the fft.data
   updateScale() {
-    let reDraw = false;
-    if (
-      (this.canvas.width !== this.container.innerWidth)
-      || (this.canvas.height !== this.container.innerHeight)
-    ) {
+    // If the canvas has resized, prepare to redraw.
+    const reDraw = (this.canvas.width !== this.container.innerWidth)
+    || (this.canvas.height !== this.container.innerHeight);
+    if (hasResized) {
       this.sampleRate = this.fft.audioCtx.sampleRate;
       this.frequencyBinCount = this.fft.analyser.fftSize;
       this.canvas.width = this.container.innerWidth;
       this.canvas.height = this.container.innerHeight;
       this.viewPortRight = this.canvas.width - this.scaleWidth;
       this.viewPortBottom = this.canvas.height;
-      reDraw = true;
     }
+
     if (this.scaleMode === 'linear') {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
@@ -194,11 +202,13 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     }
   }
 
+  /** Clears the canvas. */
   clear() {
     this.ctx.fillStyle = this.getColor(0);
     this.ctx.fillRect(0, 0, this.canvas.width - this.scaleWidth, this.viewPortBottom);
   }
 
+  /** Returns pre-defined colors for formants. If unavailable, returns a grayscale color. */
   getColor(d) {
     if (colormap === undefined) { return `rbg(${d},${d},${d})`; }
     return (`rgb(
@@ -207,7 +217,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       ${colormap[this.colormap][d][2] * 255})`);
   }
 
-  // draws the spectrogram from data
+  /** Draws the spectrogram from available data. */
   scrollCanvas(width) {
     if (this.pause) return;
     // Draw the canvas to the side
