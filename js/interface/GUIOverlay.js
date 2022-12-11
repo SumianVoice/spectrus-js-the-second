@@ -120,15 +120,15 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
     // draw harmonics
     if (harmonics === true) {
-      let hwidth = 150;
-      let hoffset = 50;
+      const hwidth = 150;
+      const hoffset = 50;
       for (let i = 2; i < 20; i++) {
-        let hzy = i * this.spec.hzFromY(y)
-        let posy = this.spec.yFromHz(hzy)
-        this.ctx.fillStyle = "#11111144";
+        const hzy = i * this.spec.hzFromY(y);
+        const posy = this.spec.yFromHz(hzy);
+        this.ctx.fillStyle = '#11111144';
         this.ctx.fillRect(x - hwidth + hoffset + 0, posy - 1, hwidth + 2, 2 + 2);
-        this.ctx.fillStyle = color + "80";
-        this.ctx.fillRect(x - hwidth + hoffset + 1, posy,     hwidth,     2);
+        this.ctx.fillStyle = `${color}80`;
+        this.ctx.fillRect(x - hwidth + hoffset + 1, posy, hwidth, 2);
       }
     }
 
@@ -159,8 +159,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
         'Mono',
       );
       // show the hz of that note
-      let notehz = getNoteHz(tmpNote, this.notationType)
-      let notey = this.spec.yFromHz(notehz)
+      const notehz = getNoteHz(tmpNote, this.notationType);
+      // let notey = this.spec.yFromHz(notehz)
       // this.ctx.fillStyle = "#11111144";
       // this.ctx.fillRect(x - 50 - 1, notey - 1, 14, 4);
       // this.ctx.fillStyle = "#66aaff";
@@ -226,7 +226,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   }
 
   harmonicstoggle() {
-    this.show_cursor_harmonics = !this.show_cursor_harmonics
+    this.show_cursor_harmonics = !this.show_cursor_harmonics;
   }
 
   update() {
