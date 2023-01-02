@@ -179,8 +179,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
    *
    * This method calculates the scaling factor for the spectrogram and the scale/ruler, i.e, what
    * the fft.data values need to be multiplied by to fill the screen.
-   *
-   * @todo Check if this.scaleX is necessary.
    */
   updateScale() {
     // Check if the canvas has been resized and needs to be re-drawn.
