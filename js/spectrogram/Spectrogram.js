@@ -32,22 +32,32 @@ function getMoreAccurateFundamental(array, start) {
 /**
  * Calculate the moving average of each element in an array.
  *
- * @todo Check if loop should go from l = i - span to i + span + 1.
+ * This function calculates a moving average without zero padding. No values outside bounds are
+ * assumed.
+ * @param {Uint8Array} array Input array of length n to be processed.
+ * @param {number} span Length on either side indicating the size of the sliding window.
+ * @param {number} maxIndex Maximum size for the output array.
  */
 function movingAverage(array, span, maxIndex = 1000) {
-  const output = new Array(Math.min(array.length, maxIndex));
-  let tmpCurAvg;
-  let totalDiv;
-  for (let i = 0; i < Math.min(array.length, maxIndex); i++) {
-    tmpCurAvg = 0;
-    totalDiv = 0;
-    for (let l = i - span; l < i + span; l++) {
-      if (l > 0 && l < Math.min(array.length, maxIndex)) {
-        tmpCurAvg += array[l];
-        totalDiv += 1;
+  // Create an output array and crop array to size maxIndex.
+  const outputSize = Math.min(array.length, maxIndex);
+  const output = new Array(outputSize);
+
+  // Calculate average for each index.
+  let sum;
+  let count;
+  for (let i = 0; i < outputSize; i++) {
+    sum = 0;
+    count = 0;
+    /** @todo Check if loop should go from l = i - span to i + span + 1. */
+    for (let j = i - span; j < i + span; j++) {
+      /** @todo Check if j > -1 or 0. */
+      if (j > 0 && j < outputSize) {
+        sum += array[j];
+        count += 1;
       }
     }
-    output[i] = tmpCurAvg / totalDiv;
+    output[i] = sum / count;
   }
   return output;
 }
@@ -179,8 +189,6 @@ class Spectrogram { // eslint-disable-line no-unused-vars
    *
    * This method calculates the scaling factor for the spectrogram and the scale/ruler, i.e, what
    * the fft.data values need to be multiplied by to fill the screen.
-   *
-   * @todo Check if this.scaleX is necessary.
    */
   updateScale() {
     // Check if the canvas has been resized and needs to be re-drawn.
@@ -230,59 +238,61 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       ${colormap[this.colormap][d][2] * 255})`);
   }
 
-  /** Draws the spectrogram from available data. */
+  /**
+   * Shifts the current canvas content to the left.
+   * @param {number} width Amount to be shifted by in pixels.
+   */
   scrollCanvas(width) {
     if (this.pause) return;
-    // Draw the canvas to the side
-    this.ctx.drawImage(
-      this.canvas,
-      width,
-      0,
-      this.canvas.width - this.scaleWidth,
-      this.canvas.height,
-      0,
-      0,
-      this.canvas.width - this.scaleWidth,
-      this.canvas.height,
-    );
+
+    // Calculate the offset and cropping size.
+    const offset = [width, 0];
+    const size = [this.canvas.width - this.scaleWidth, this.canvas.height];
+
+    // Capture canvas contents from image[width, :][:] and move to image[0, width][:].
+    this.ctx.drawImage(this.canvas, ...offset, ...size, 0, 0, ...size);
   }
 
+  /**
+   * Extracts and plots formants on the spectrogram.
+   * @param {Uint8Array} data Member of FFTAnalyser containing frequency data at current timestamp.
+   * @param {number} dt Time from last update. This is used to calculate the width of format plots.
+   */
   plotFormants(data, dt) {
+    // If paused or has formants disabled, return.
     if (this.pause) return;
+    if (!this.track.formants) return;
+
+    // Caluclate the width and size of the formant bar bounded by [1, 5].
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
-    if (this.track.fundamental === true) {
-      if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
-        this.plot(
-          this.viewPortRight - width,
-          this.yFromIndex(this.f[0]),
-          this.formantColors[0],
-          width,
-          2,
-        );
-      }
+    const size = [width, 2];
+
+    // If the fundamental frequency has been found, draw it.
+    let corner;
+    if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
+      corner = [this.viewPortRight - width, this.yFromIndex(this.f[0])];
+      this.plot(...corner, this.formantColors[0], ...size);
     }
 
-    if (this.track.formants === true) {
-      // formants
-      let movAvg = movingAverage(data, 20);
-      movAvg = movingAverage(movAvg, 10);
-      const movAvgPeaks = getPeaks(movAvg, 6, 1);
-      const formants = getFormants(movAvgPeaks, this.track.formantCount);
-      // console.log(formants);
-      for (let i = 0; i < this.track.formantCount; i++) {
-        // eslint-disable-next-line prefer-destructuring
-        this.f[i + 1].index = formants[i][0]; // skip 0
-        // eslint-disable-next-line prefer-destructuring
-        this.f[i + 1].amp = formants[i][1]; // skip 0
-        this.f[i + 1].active = true; // skip 0
-        this.plot(
-          this.viewPortRight - width,
-          this.yFromIndex(formants[i][0]),
-          this.formantColors[i + 1],
-          width,
-          2,
-        );
-      }
+    // Calculate moving average of array.
+    let movAvg = movingAverage(data, 20);
+    movAvg = movingAverage(movAvg, 10);
+
+    // Extract formants.
+    const movAvgPeaks = getPeaks(movAvg, 6, 1);
+    const formants = getFormants(movAvgPeaks, this.track.formantCount);
+
+    // Set and draw formants.
+    for (let i = 0; i < this.track.formantCount; i++) {
+      // eslint-disable-next-line prefer-destructuring
+      this.f[i + 1].index = formants[i][0]; // skip 0
+      // eslint-disable-next-line prefer-destructuring
+      this.f[i + 1].amp = formants[i][1]; // skip 0
+      this.f[i + 1].active = true; // skip 0
+
+      // Draw the formant.
+      corner = [this.viewPortRight - width, this.yFromIndex(formants[i][0])];
+      this.plot(...corner, this.formantColors[i + 1], ...size);
     }
   }
 
@@ -311,9 +321,13 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.plotFormants(data, dt);
   }
 
+  /** Draws a rectangle with a top and bottom black border. */
   plot(x, y, color, width, height) {
+    // Fill the black border rectangle.
     this.ctx.fillStyle = '#333333';
     this.ctx.fillRect(x, Math.round(y - height / 2) - 1, width, height + 2);
+
+    // Fill the inner color.
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x, Math.round(y - height / 2), width, height);
   }
@@ -445,24 +459,24 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     return this.hzFromIndex(this.indexFromY(y));
   }
 
-  // try to find the fundamental index
+  /**
+   * Attempts to find the fundamental index.
+   * @param {Uint8Array} array Contains amplitudes of detected audio.
+   * @returns {Object} Contains index and amplitude of fundamental frequency if found.
+   */
   getFundamental(array) {
-    // get highest peak
-    let highestPeak = 0;
-
+    // Find the maximum value.
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
-    for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
-      if (array[i] > highestPeak) {
-        highestPeak = array[i];
-      }
-    }
-    const peakThreshold = highestPeak * 0.7; // only look at things above this theshold
+    const highestPeak = array.slice(0, tmpMaxCheck).reduce((a, b) => Math.max(a, b), 0);
+
+    // Find the filtering threshold.
+    const peakThreshold = highestPeak * 0.7;
     let currentPeakIndex = 0;
     let currentPeakAmplitude = 0;
     for (let i = 0; i < tmpMaxCheck; i++) {
-      // only look above threshold
+      // Check if the current value is above the valid peak threshold.
       if (array[i] > peakThreshold) {
-        // look for peaks
+        // Maintian the maximum valid value.
         if (array[i] > currentPeakAmplitude) {
           currentPeakIndex = i;
           currentPeakAmplitude = array[i];
