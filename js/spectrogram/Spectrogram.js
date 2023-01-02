@@ -263,15 +263,15 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     if (this.pause) return;
     if (!this.track.formants) return;
 
-    // Caluclate the width of the formant bar bounded by [1, 5].
+    // Caluclate the width and size of the formant bar bounded by [1, 5].
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
+    const size = [width, 2];
 
-    // If the fundamental frequency is found, draw it.
+    // If the fundamental frequency has been found, draw it.
+    let corner;
     if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
-      const corner = [this.viewPortRight - width, this.yFromIndex(this.f[0])];
-      const color = this.formantColors[0];
-      const size = [width, 2];
-      this.plot(...corner, color, ...size);
+      corner = [this.viewPortRight - width, this.yFromIndex(this.f[0])];
+      this.plot(...corner, this.formantColors[0], ...size);
     }
 
     // Calculate moving average of array.
@@ -282,20 +282,17 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     const movAvgPeaks = getPeaks(movAvg, 6, 1);
     const formants = getFormants(movAvgPeaks, this.track.formantCount);
 
-    // console.log(formants);
+    // Set and draw formants.
     for (let i = 0; i < this.track.formantCount; i++) {
       // eslint-disable-next-line prefer-destructuring
       this.f[i + 1].index = formants[i][0]; // skip 0
       // eslint-disable-next-line prefer-destructuring
       this.f[i + 1].amp = formants[i][1]; // skip 0
       this.f[i + 1].active = true; // skip 0
-      this.plot(
-        this.viewPortRight - width,
-        this.yFromIndex(formants[i][0]),
-        this.formantColors[i + 1],
-        width,
-        2,
-      );
+
+      // Draw the formant.
+      corner = [this.viewPortRight - width, this.yFromIndex(formants[i][0])];
+      this.plot(...corner, this.formantColors[i + 1], ...size);
     }
   }
 
@@ -462,24 +459,24 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     return this.hzFromIndex(this.indexFromY(y));
   }
 
-  // try to find the fundamental index
+  /**
+   * Attempts to find the fundamental index.
+   * @param {Uint8Array} array Contains amplitudes of detected audio.
+   * @returns {Object} Contains index and amplitude of fundamental frequency if found.
+   */
   getFundamental(array) {
-    // get highest peak
-    let highestPeak = 0;
-
+    // Find the maximum value.
     const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
-    for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
-      if (array[i] > highestPeak) {
-        highestPeak = array[i];
-      }
-    }
-    const peakThreshold = highestPeak * 0.7; // only look at things above this theshold
+    const highestPeak = array.slice(0, tmpMaxCheck).reduce((a, b) => Math.max(a, b), 0);
+
+    // Find the filtering threshold.
+    const peakThreshold = highestPeak * 0.7;
     let currentPeakIndex = 0;
     let currentPeakAmplitude = 0;
     for (let i = 0; i < tmpMaxCheck; i++) {
-      // only look above threshold
+      // Check if the current value is above the valid peak threshold.
       if (array[i] > peakThreshold) {
-        // look for peaks
+        // Maintian the maximum valid value.
         if (array[i] > currentPeakAmplitude) {
           currentPeakIndex = i;
           currentPeakAmplitude = array[i];
