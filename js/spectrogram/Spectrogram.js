@@ -41,8 +41,8 @@ function movingAverage(array, span, maxIndex = 1000) {
   for (let i = 0; i < Math.min(array.length, maxIndex); i++) {
     tmpCurAvg = 0;
     totalDiv = 0;
-    for (let l = i - span; l < i + span; l++) {
-      if (l > 0 && l < Math.min(array.length, maxIndex)) {
+    for (let l = i - span; l <= i + span; l++) {
+      if (l >= 0 && l < Math.min(array.length, maxIndex)) {
         tmpCurAvg += array[l];
         totalDiv += 1;
       }
