@@ -312,27 +312,31 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   }
 
   draw(data, dt) {
+    // If paused, stop.
     if (this.pause) return;
+
+    // Scroll the canvas to the left by a width bounded by [1, 5].
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     this.scrollCanvas(width);
-    // loop through all array position and render each in their proper position
-    // for the default setting, this does 8000 or so entries
+
+    // Loop through all array position and render each in their proper position as rectangles.
+    // By default, the array length is 8000.
     for (let i = 0; i < data.length - 1; i++) {
-      const tmpY = Math.ceil(this.yFromIndex(i));
+      const y2 = Math.ceil(this.yFromIndex(i));
       // this number will be -1 when the height rounds to 0,
       // because negative number (i-1) is Math.ceil()'d
-      const tmpHeight = Math.floor(this.yFromIndex(i + 1)) - tmpY;
-      if (tmpHeight === -1) {
+      const y1 = Math.floor(this.yFromIndex(i + 1));
+      if (y1 - y2 === -1) {
         continue;
       }
+
+      // Draw the rectangle.
       this.ctx.fillStyle = this.getColor(data[i]);
-      this.ctx.fillRect(
-        this.viewPortRight - width,
-        tmpY,
-        width,
-        tmpHeight,
-      );
+      const corner = [this.viewPortRight - width, y1];
+      const size = [width, y2 - y1];
+      this.ctx.fillRect(...corner, ...size);
     }
+
     this.plotFormants(data, dt);
   }
 
@@ -355,6 +359,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   }
 
   drawScale() {
+    /** @todo Check if this line is necessary. */
     this.ctx.clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
     let tmpStepDist = 50;
 
@@ -451,7 +456,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     if (this.scaleMode === 'log') {
       return this.viewPortBottom - (getBaseLog(index, this.logScale) * this.scaleY);
     }
-    throw new Error('invalid scale mode');
+    throw new Error('Invalid scale mode.');
   }
 
   // takes a Y value and returns its index in the array
