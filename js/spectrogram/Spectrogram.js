@@ -39,21 +39,19 @@ function getMoreAccurateFundamental(array, start) {
  * @param {number} maxIndex Maximum size for the output array.
  */
 function movingAverage(array, span, maxIndex = 1000) {
-  // Create an output array and crop array to size maxIndex.
-  const outputSize = Math.min(array.length, maxIndex);
-  const output = new Array(outputSize);
-
-  // Calculate average for each index.
-  let sum;
-  let count;
-  for (let i = 0; i < outputSize; i++) {
-    sum = 0;
-    count = 0;
-    for (let j = Math.max(i - span, 0); j < Math.min(i + span + 1, outputSize - 1); j++) {
-      sum += array[j];
-      count += 1;
+  const output = new Array(Math.min(array.length, maxIndex));
+  let tmpCurAvg;
+  let totalDiv;
+  for (let i = 0; i < Math.min(array.length, maxIndex); i++) {
+    tmpCurAvg = 0;
+    totalDiv = 0;
+    for (let l = i - span; l <= i + span; l++) {
+      if (l >= 0 && l < Math.min(array.length, maxIndex)) {
+        tmpCurAvg += array[l];
+        totalDiv += 1;
+      }
     }
-    output[i] = sum / count;
+    output[i] = tmpCurAvg / totalDiv;
   }
   return output;
 }
