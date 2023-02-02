@@ -49,43 +49,58 @@ function movingAverage(array, span, maxIndex = 1000) {
   for (let i = 0; i < outputSize; i++) {
     sum = 0;
     count = 0;
-    /** @todo Check if loop should go from l = i - span to i + span + 1. */
-    for (let j = i - span; j < i + span; j++) {
-      /** @todo Check if j > -1 or 0. */
-      if (j > 0 && j < outputSize) {
-        sum += array[j];
-        count += 1;
-      }
+    for (let j = Math.max(i - span, 0); j < Math.min(i + span + 1, outputSize - 1); j++) {
+      sum += array[j];
+      count += 1;
     }
     output[i] = sum / count;
   }
   return output;
 }
 
+/**
+ * Find peaks in an array with segments of increasing size.
+ *
+ * This function keeps increasing the size of the segment exponentially and maintains the largest
+ * value for the current segment.
+ * @param {Uint8Array} array Input array of length n.
+ * @param {number} baseSegmentSize Initial segment size, or the smallest possible unit of size.
+ * @param {number} logPeaksScale Initial
+ * @returns {Array} Array of peaks and indices.
+ */
 function getPeaks(array, baseSegmentSize, logPeaksScale) {
+  // Initialize the output array.
+  const peaks = new Array(0);
+
+  /** @todo Understand reason for this. */
+  peaks.push([1, 10]);
+
+  // Initialize variables for looping.
   let segmentSize = baseSegmentSize;
-  let curSegment = 1;
+  let segmentIndex = 1;
   let segmentStart = 0;
 
-  const peaks = new Array(0); // make a blank array for adding to later
+  // Initialize peak value and index.
+  let currPeakIndex = 0;
+  let currPeakValue = 0;
 
-  let tmpPeakIndex = 0;
-  let tmpPeakValue = 0;
-  peaks.push([1, 10]);
+  // Perform the loop.
   for (let k = 0; k < array.length; k++) {
-    // tmpPeakIndex = k;
-    if (array[k] >= tmpPeakValue) {
-      tmpPeakIndex = k;
-      tmpPeakValue = array[k];
+    // Update peak if the value is larger.
+    if (array[k] >= currPeakValue) {
+      currPeakIndex = k;
+      currPeakValue = array[k];
     }
 
-    if (k >= segmentStart + segmentSize) { // when you get to the end of the segment
-      peaks.push([tmpPeakIndex, tmpPeakValue]);
+    // If the segment boundary has been reached, add peak to output.
+    if (k === segmentStart + segmentSize) {
+      peaks.push([currPeakIndex, currPeakValue]);
 
-      segmentSize = unBaseLog(logPeaksScale, curSegment) * baseSegmentSize;
+      /** @todo Check argument order in unBaseLog(logPeaksScale, curSegment). */
+      segmentSize = unBaseLog(logPeaksScale, segmentIndex) * baseSegmentSize;
       segmentStart = k;
-      curSegment++;
-      tmpPeakValue = 0;
+      segmentIndex++;
+      currPeakValue = 0;
     }
   }
 
