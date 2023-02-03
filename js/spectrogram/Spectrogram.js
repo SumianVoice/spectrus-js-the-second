@@ -32,7 +32,11 @@ function getMoreAccurateFundamental(array, start) {
 /**
  * Calculate the moving average of each element in an array.
  *
- * @todo Check if loop should go from l = i - span to i + span + 1.
+ * This function calculates a moving average without zero padding. No values outside bounds are
+ * assumed.
+ * @param {Uint8Array} array Input array of length n to be processed.
+ * @param {number} span Length on either side indicating the size of the sliding window.
+ * @param {number} maxIndex Maximum size for the output array.
  */
 function movingAverage(array, span, maxIndex = 1000) {
   const output = new Array(Math.min(array.length, maxIndex));
@@ -52,6 +56,16 @@ function movingAverage(array, span, maxIndex = 1000) {
   return output;
 }
 
+/**
+ * Find peaks in an array with segments of increasing size.
+ *
+ * This function keeps increasing the size of the segment exponentially and maintains the largest
+ * value for the current segment.
+ * @param {Uint8Array} array Input array of length n.
+ * @param {number} baseSegmentSize Initial segment size, or the smallest possible unit of size.
+ * @param {number} logPeaksScale Initial
+ * @returns {Array} Array of peaks and indices.
+ */
 function getPeaks(array, baseSegmentSize, logPeaksScale) {
   let segmentSize = baseSegmentSize;
   let curSegment = 1;
@@ -247,6 +261,11 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     );
   }
 
+  /**
+   * Extracts and plots formants on the spectrogram.
+   * @param {Uint8Array} data Member of FFTAnalyser containing frequency data at current timestamp.
+   * @param {number} dt Time from last update. This is used to calculate the width of format plots.
+   */
   plotFormants(data, dt) {
     if (this.pause) return;
     const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
@@ -311,6 +330,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.plotFormants(data, dt);
   }
 
+  /** Draws a rectangle with a top and bottom black border. */
   plot(x, y, color, width, height) {
     this.ctx.fillStyle = '#333333';
     this.ctx.fillRect(x, Math.round(y - height / 2) - 1, width, height + 2);
@@ -445,7 +465,11 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     return this.hzFromIndex(this.indexFromY(y));
   }
 
-  // try to find the fundamental index
+  /**
+   * Attempts to find the fundamental index.
+   * @param {Uint8Array} array Contains amplitudes of detected audio.
+   * @returns {Object} Contains index and amplitude of fundamental frequency if found.
+   */
   getFundamental(array) {
     // get highest peak
     let highestPeak = 0;
