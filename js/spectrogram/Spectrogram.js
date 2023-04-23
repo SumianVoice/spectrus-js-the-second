@@ -146,6 +146,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.scaleMode = 'log';
+    this.pitchTrackMode = false
     this.logScale = 2;
     this.specMin = 0;
     this.specMax = 15000;
@@ -266,9 +267,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
    * @param {Uint8Array} data Member of FFTAnalyser containing frequency data at current timestamp.
    * @param {number} dt Time from last update. This is used to calculate the width of format plots.
    */
-  plotFormants(data, dt) {
+  plotFormants(data, width) {
     if (this.pause) return;
-    const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     if (this.track.fundamental === true) {
       if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
         this.plot(
@@ -305,10 +305,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     }
   }
 
-  draw(data, dt) {
-    if (this.pause) return;
-    const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
-    this.scrollCanvas(width);
+  drawSpectrogramSlice(data, width) {
     // loop through all array position and render each in their proper position
     // for the default setting, this does 8000 or so entries
     for (let i = 0; i < data.length - 1; i++) {
@@ -327,7 +324,43 @@ class Spectrogram { // eslint-disable-line no-unused-vars
         tmpHeight,
       );
     }
-    this.plotFormants(data, dt);
+  }
+
+  clearCurrentSlice(width) {
+    this.ctx.fillStyle = this.getColor(0);
+    this.ctx.fillRect(
+      this.viewPortRight - width,
+      0,
+      width,
+      this.viewPortBottom,
+    );
+  }
+
+  draw(data, dt) {
+    if (this.pause) return;
+    const width = Math.round(this.speed * dt);
+    this.scrollCanvas(width);
+    this.clearCurrentSlice(width)
+    
+    if (!this.pitchTrackMode) {
+      this.drawSpectrogramSlice(data, width);
+    }
+    else {
+      this.drawPitchTrackerMode(data, width)
+    }
+    this.plotFormants(data, width);
+  }
+
+  drawPitchTrackerMode(data, width) {
+    if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
+      this.plot(
+        this.viewPortRight - width,
+        this.yFromIndex(this.f[0]),
+        this.formantColors[0],
+        width,
+        8,
+      );
+    }
   }
 
   /** Draws a rectangle with a top and bottom black border. */
@@ -528,5 +561,10 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.notationType = this.notationType === 'experimental' ? 'musical' : 'experimental';
     this.updateScale();
     this.drawScale();
+  }
+
+  pitchTrackModeToggle() {
+    this.pitchTrackMode = !this.pitchTrackMode;
+
   }
 }
