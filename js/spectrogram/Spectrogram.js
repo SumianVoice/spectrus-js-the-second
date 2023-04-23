@@ -146,7 +146,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
     this.scaleMode = 'log';
-    this.pitchTrackMode = false
+    this.pitchTrackMode = false;
     this.logScale = 2;
     this.specMin = 0;
     this.specMax = 15000;
@@ -340,13 +340,12 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     if (this.pause) return;
     const width = Math.round(this.speed * dt);
     this.scrollCanvas(width);
-    this.clearCurrentSlice(width)
-    
+    this.clearCurrentSlice(width);
+
     if (!this.pitchTrackMode) {
       this.drawSpectrogramSlice(data, width);
-    }
-    else {
-      this.drawPitchTrackerMode(data, width)
+    } else {
+      this.drawPitchTrackerMode(data, width);
     }
     this.plotFormants(data, width);
   }
@@ -565,6 +564,5 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   pitchTrackModeToggle() {
     this.pitchTrackMode = !this.pitchTrackMode;
-
   }
 }
