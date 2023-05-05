@@ -154,6 +154,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleY = 1;
     this.speed = 100;
     this.notationType = 'musical';
+    // how much accumulative width in pixels should be covered this frame, to make scrolling more time-accurate
+    this.running_width = 0;
 
     // Configure spectrogram options.
     this.pause = false;
@@ -338,7 +340,10 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   draw(data, dt) {
     if (this.pause) return;
-    const width = Math.max(Math.round(this.speed * dt), 1);
+
+    this.running_width += this.speed * dt
+    const width = Math.max(Math.round(this.running_width), 1);
+    this.running_width -= width
     this.scrollCanvas(width);
     this.clearCurrentSlice(width);
 
