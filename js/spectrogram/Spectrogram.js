@@ -351,7 +351,7 @@ class Spectrogram {
 
   draw(data, dt) {
     if (this.pause) return;
-    const width = Math.round(this.speed * dt);
+    const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     this.scrollCanvas(width);
     this.clearCurrentSlice(width);
 
