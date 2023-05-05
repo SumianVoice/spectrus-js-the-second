@@ -154,7 +154,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleY = 1;
     this.speed = 100;
     this.notationType = 'musical';
-    // how much accumulative width in pixels should be covered this frame, to make scrolling more time-accurate
+    // how much accumulative width in pixels should be covered this frame
+    // to make scrolling more time-accurate
     this.running_width = 0;
 
     // Configure spectrogram options.
