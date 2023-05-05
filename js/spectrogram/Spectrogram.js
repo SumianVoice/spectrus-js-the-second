@@ -338,7 +338,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   draw(data, dt) {
     if (this.pause) return;
-    const width = Math.round(this.speed * dt);
+    const width = Math.max(Math.round(this.speed * dt), 1);
     this.scrollCanvas(width);
     this.clearCurrentSlice(width);
 
