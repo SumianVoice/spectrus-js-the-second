@@ -1,32 +1,38 @@
 const FORMANT_COLORS = [
-  '#fff', // f0
-  '#f3f', // f1
-  '#ff1', // f2
-  '#6ff', // f3
-  '#f22',
-  '#ff2',
-  '#2f2',
-  '#22f',
+  "#fff", // f0
+  "#f3f", // f1
+  "#ff1", // f2
+  "#6ff", // f3
+  "#f22",
+  "#ff2",
+  "#2f2",
+  "#22f",
 ];
 
 function getBaseLog(number, base) {
-  return Math.round((Math.log(number) / Math.log(base)) * 1000000000) / 1000000000;
+  return (
+    Math.round((Math.log(number) / Math.log(base)) * 1000000000) / 1000000000
+  );
 }
 
 function unBaseLog(answer, base) {
-  return (base ** answer);
+  return base ** answer;
 }
 
 function getMoreAccurateFundamental(array, start) {
   let total = array[start];
   let div = 1;
-  for (let i = Math.max(start - 2, 0); i < Math.min(start + 2, array.length - 1); i++) {
+  for (
+    let i = Math.max(start - 2, 0);
+    i < Math.min(start + 2, array.length - 1);
+    i++
+  ) {
     if (i !== start) {
-      total += (array[i]) * i;
-      div += (array[i]);
+      total += array[i] * i;
+      div += array[i];
     }
   }
-  return (total / div);
+  return total / div;
 }
 
 /**
@@ -83,7 +89,8 @@ function getPeaks(array, baseSegmentSize, logPeaksScale) {
       tmpPeakValue = array[k];
     }
 
-    if (k >= segmentStart + segmentSize) { // when you get to the end of the segment
+    if (k >= segmentStart + segmentSize) {
+      // when you get to the end of the segment
       peaks.push([tmpPeakIndex, tmpPeakValue]);
 
       segmentSize = unBaseLog(logPeaksScale, curSegment) * baseSegmentSize;
@@ -108,7 +115,7 @@ function getFormants(array, formantCount = 3) {
         avgPos = 0;
         totalDiv = 0;
         for (let l = -1; l < 2; l++) {
-          avgPos += array[(i + l)][0] * array[i + l][1] ** tmpExp;
+          avgPos += array[i + l][0] * array[i + l][1] ** tmpExp;
           totalDiv += array[i + l][1] ** tmpExp;
         }
         avgPos /= totalDiv;
@@ -122,7 +129,8 @@ function getFormants(array, formantCount = 3) {
 }
 
 /** This class performs FFT and renders the spectrogram and the scale. */
-class Spectrogram { // eslint-disable-line no-unused-vars
+class Spectrogram {
+  // eslint-disable-line no-unused-vars
   /**
    * Saves variables, initializes dimensions and formants, and draws the scale.
    * @param {AudioSystem} audioSystem A reference to the parent, used to access the FFT analyzer
@@ -138,14 +146,14 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.container = container;
     this.canvas.width = container.innerWidth;
     this.canvas.height = container.innerHeight;
-    this.ctx = this.canvas.getContext('2d');
-    this.colormap = 'viridis';
+    this.ctx = this.canvas.getContext("2d");
+    this.colormap = "viridis";
 
     // Initialize and draw scale.
     this.scaleWidth = 100;
     this.viewPortRight = this.canvas.width - this.scaleWidth;
     this.viewPortBottom = this.canvas.height;
-    this.scaleMode = 'log';
+    this.scaleMode = "log";
     this.pitchTrackMode = false;
     this.logScale = 2;
     this.specMin = 0;
@@ -153,7 +161,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     this.scaleX = 1;
     this.scaleY = 1;
     this.speed = 100;
-    this.notationType = 'musical';
+    this.notationType = "musical";
 
     // Configure spectrogram options.
     this.pause = false;
@@ -199,8 +207,9 @@ class Spectrogram { // eslint-disable-line no-unused-vars
    */
   updateScale() {
     // Check if the canvas has been resized and needs to be re-drawn.
-    const reDraw = (this.canvas.width !== this.container.innerWidth)
-    || (this.canvas.height !== this.container.innerHeight);
+    const reDraw =
+      this.canvas.width !== this.container.innerWidth ||
+      this.canvas.height !== this.container.innerHeight;
 
     // If it needs to be re-drawn, calculate the new dimensions.
     if (reDraw) {
@@ -213,14 +222,16 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     }
 
     // Calculate scaling for the spectrogram.
-    if (this.scaleMode === 'linear') {
+    if (this.scaleMode === "linear") {
       this.scaleX = this.canvas.width / this.indexFromHz(this.specMax);
       this.scaleY = this.canvas.height / this.indexFromHz(this.specMax);
-    } else if (this.scaleMode === 'log') {
-      this.scaleX = this.canvas.width
-        / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
-      this.scaleY = this.canvas.height
-        / getBaseLog(this.indexFromHz(this.specMax), this.logScale);
+    } else if (this.scaleMode === "log") {
+      this.scaleX =
+        this.canvas.width /
+        getBaseLog(this.indexFromHz(this.specMax), this.logScale);
+      this.scaleY =
+        this.canvas.height /
+        getBaseLog(this.indexFromHz(this.specMax), this.logScale);
     }
 
     // Re-draw if necessary.
@@ -233,16 +244,23 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   /** Clears the canvas. */
   clear() {
     this.ctx.fillStyle = this.getColor(0);
-    this.ctx.fillRect(0, 0, this.canvas.width - this.scaleWidth, this.viewPortBottom);
+    this.ctx.fillRect(
+      0,
+      0,
+      this.canvas.width - this.scaleWidth,
+      this.viewPortBottom
+    );
   }
 
   /** Returns pre-defined colors for formants. If unavailable, returns a grayscale color. */
   getColor(d) {
-    if (colormap === undefined) { return `rbg(${d},${d},${d})`; }
-    return (`rgb(
+    if (colormap === undefined) {
+      return `rbg(${d},${d},${d})`;
+    }
+    return `rgb(
       ${colormap[this.colormap][d][0] * 255},
       ${colormap[this.colormap][d][1] * 255},
-      ${colormap[this.colormap][d][2] * 255})`);
+      ${colormap[this.colormap][d][2] * 255})`;
   }
 
   /** Draws the spectrogram from available data. */
@@ -258,7 +276,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       0,
       0,
       this.canvas.width - this.scaleWidth,
-      this.canvas.height,
+      this.canvas.height
     );
   }
 
@@ -276,7 +294,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
           this.yFromIndex(this.f[0]),
           this.formantColors[0],
           width,
-          2,
+          2
         );
       }
     }
@@ -299,7 +317,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
           this.yFromIndex(formants[i][0]),
           this.formantColors[i + 1],
           width,
-          2,
+          2
         );
       }
     }
@@ -317,12 +335,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
         continue;
       }
       this.ctx.fillStyle = this.getColor(data[i]);
-      this.ctx.fillRect(
-        this.viewPortRight - width,
-        tmpY,
-        width,
-        tmpHeight,
-      );
+      this.ctx.fillRect(this.viewPortRight - width, tmpY, width, tmpHeight);
     }
   }
 
@@ -332,13 +345,13 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       this.viewPortRight - width,
       0,
       width,
-      this.viewPortBottom,
+      this.viewPortBottom
     );
   }
 
   draw(data, dt) {
     if (this.pause) return;
-    const width = Math.round(this.speed * dt);
+    const width = Math.min(Math.max(Math.round(this.speed * dt), 1), 5);
     this.scrollCanvas(width);
     this.clearCurrentSlice(width);
 
@@ -357,20 +370,20 @@ class Spectrogram { // eslint-disable-line no-unused-vars
         this.yFromIndex(this.f[0]),
         this.formantColors[0],
         width,
-        8,
+        8
       );
     }
   }
 
   /** Draws a rectangle with a top and bottom black border. */
   plot(x, y, color, width, height) {
-    this.ctx.fillStyle = '#333333';
+    this.ctx.fillStyle = "#333333";
     this.ctx.fillRect(x, Math.round(y - height / 2) - 1, width, height + 2);
     this.ctx.fillStyle = color;
     this.ctx.fillRect(x, Math.round(y - height / 2), width, height);
   }
 
-  renderText(text, x, y, color = '#fff', fontsize = '20px', font = 'Mono') {
+  renderText(text, x, y, color = "#fff", fontsize = "20px", font = "Mono") {
     this.ctx.font = `${fontsize} ${font}`;
     this.ctx.fillStyle = color;
     this.ctx.fillText(text, x, y);
@@ -378,7 +391,12 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   }
 
   drawScale() {
-    this.ctx.clearRect(this.viewPortRight, 0, this.scaleWidth, this.canvas.height);
+    this.ctx.clearRect(
+      this.viewPortRight,
+      0,
+      this.scaleWidth,
+      this.canvas.height
+    );
     let tmpStepDist = 50;
 
     // ========= notes scale =========
@@ -387,70 +405,80 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     const A1 = 55;
     for (let i = -1; i < 12; i++) {
       // A0-A9 note
-      tmpHZ = (A1 * (2 ** i));
-      this.ctx.fillStyle = '#aa99ff33'; // set color
+      tmpHZ = A1 * 2 ** i;
+      this.ctx.fillStyle = "#aa99ff33"; // set color
       this.ctx.fillRect(
         this.canvas.width - this.scaleWidth,
         this.yFromIndex(this.indexFromHz(tmpHZ)),
         77,
-        1,
+        1
       );
-      this.ctx.fillStyle = '#a9f'; // set color
+      this.ctx.fillStyle = "#a9f"; // set color
       this.ctx.fillRect(
         this.canvas.width - this.scaleWidth,
         this.yFromIndex(this.indexFromHz(tmpHZ)),
         5,
-        1,
+        1
       );
       // this.ctx.fillStyle = `#a9f`; // set color
       this.ctx.fillText(
         lookupNote(tmpHZ, this.notationType),
         this.canvas.width - this.scaleWidth + 70,
-        this.yFromIndex(this.indexFromHz(tmpHZ)),
+        this.yFromIndex(this.indexFromHz(tmpHZ))
       );
     }
     // ========= main scale =========
-    if (this.scaleMode === 'log') {
+    if (this.scaleMode === "log") {
       for (let i = 1; i < this.canvas.height / tmpStepDist; i++) {
-        this.ctx.fillStyle = '#888';
-        this.ctx.fillRect(this.viewPortRight, (i * tmpStepDist), 20, 1);
+        this.ctx.fillStyle = "#888";
+        this.ctx.fillRect(this.viewPortRight, i * tmpStepDist, 20, 1);
         this.renderText(
           Math.floor(this.hzFromY(i * tmpStepDist)),
           this.viewPortRight,
-          (i * tmpStepDist) - 5,
-          '#777',
-          '15px',
+          i * tmpStepDist - 5,
+          "#777",
+          "15px"
         );
       }
       // do some manual steps
       const tmpSteps = [100, 500, 1000, 5000, 10000];
       for (let i = 0; i < tmpSteps.length; i++) {
-        this.ctx.fillStyle = '#555';
+        this.ctx.fillStyle = "#555";
         this.ctx.fillRect(this.viewPortRight, this.yFromHz(tmpSteps[i]), 30, 1);
         this.renderText(
           Math.floor(tmpSteps[i]),
           this.viewPortRight + 30,
           this.yFromHz(tmpSteps[i]) + 5,
-          '#444',
-          '15px',
+          "#444",
+          "15px"
         );
       }
-    } else if (this.scaleMode === 'linear') {
+    } else if (this.scaleMode === "linear") {
       tmpStepDist = 100; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
-        this.ctx.fillStyle = '#555';
-        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 5, 1);
+        this.ctx.fillStyle = "#555";
+        this.ctx.fillRect(
+          this.viewPortRight,
+          this.yFromHz(i * tmpStepDist),
+          5,
+          1
+        );
       }
       tmpStepDist = 500; // hz
       for (let i = 0; i < this.specMax / tmpStepDist; i++) {
-        this.ctx.fillStyle = '#777';
-        this.ctx.fillRect(this.viewPortRight, this.yFromHz(i * tmpStepDist), 10, 1);
+        this.ctx.fillStyle = "#777";
+        this.ctx.fillRect(
+          this.viewPortRight,
+          this.yFromHz(i * tmpStepDist),
+          10,
+          1
+        );
         this.renderText(
           Math.floor(i * tmpStepDist),
           this.viewPortRight + 20,
           this.yFromHz(i * tmpStepDist) - 5,
-          '#777',
-          '15px',
+          "#777",
+          "15px"
         );
       }
     }
@@ -468,25 +496,27 @@ class Spectrogram { // eslint-disable-line no-unused-vars
 
   // takes an index and scales it to its Y coordinate
   yFromIndex(index) {
-    if (this.scaleMode === 'linear') {
-      return this.viewPortBottom - (index * this.scaleY);
+    if (this.scaleMode === "linear") {
+      return this.viewPortBottom - index * this.scaleY;
     }
-    if (this.scaleMode === 'log') {
-      return this.viewPortBottom - (getBaseLog(index, this.logScale) * this.scaleY);
+    if (this.scaleMode === "log") {
+      return (
+        this.viewPortBottom - getBaseLog(index, this.logScale) * this.scaleY
+      );
     }
-    throw new Error('invalid scale mode');
+    throw new Error("invalid scale mode");
   }
 
   // takes a Y value and returns its index in the array
   // undoes scaling
   indexFromY(y) {
-    if (this.scaleMode === 'linear') {
+    if (this.scaleMode === "linear") {
       return (this.viewPortBottom - y) / this.scaleY;
     }
-    if (this.scaleMode === 'log') {
+    if (this.scaleMode === "log") {
       return unBaseLog((this.viewPortBottom - y) / this.scaleY, this.logScale);
     }
-    throw new Error('invalid scale mode');
+    throw new Error("invalid scale mode");
   }
 
   yFromHz(hz) {
@@ -506,8 +536,11 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     // get highest peak
     let highestPeak = 0;
 
-    const tmpMaxCheck = Math.floor(this.indexFromHz(Math.min(5000, array.length)));
-    for (let i = 0; i < tmpMaxCheck; i++) { // fast version?
+    const tmpMaxCheck = Math.floor(
+      this.indexFromHz(Math.min(5000, array.length))
+    );
+    for (let i = 0; i < tmpMaxCheck; i++) {
+      // fast version?
       if (array[i] > highestPeak) {
         highestPeak = array[i];
       }
@@ -529,7 +562,10 @@ class Spectrogram { // eslint-disable-line no-unused-vars
           this.f[0] = Math.max(currentPeakIndex, 1);
         }
         this.track.fundamentalAmp = currentPeakAmplitude;
-        return { index: Math.max(currentPeakIndex, 1), amp: currentPeakAmplitude };
+        return {
+          index: Math.max(currentPeakIndex, 1),
+          amp: currentPeakAmplitude,
+        };
       }
     }
     return { index: 0, amplitude: 0 };
@@ -547,7 +583,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   }
 
   scaleModeToggle() {
-    this.scaleMode = this.scaleMode === 'log' ? 'linear' : 'log';
+    this.scaleMode = this.scaleMode === "log" ? "linear" : "log";
     this.updateScale();
     this.drawScale();
   }
@@ -557,7 +593,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
   }
 
   notationToggle() {
-    this.notationType = this.notationType === 'experimental' ? 'musical' : 'experimental';
+    this.notationType =
+      this.notationType === "experimental" ? "musical" : "experimental";
     this.updateScale();
     this.drawScale();
   }
