@@ -56,6 +56,31 @@ function movingAverage(array, span, maxIndex = 1000) {
   return output;
 }
 
+function getMaxIndexOverVolume(array, volume = 50) {
+  let maxIndex = 1000
+  let avgs = movingAverage(array, 100, 1000)
+  let rolloff = 0
+
+  for (let i = Math.min(avgs.length, maxIndex) - 1; i >= 0; i--) {
+    if (avgs[i] > volume) {
+      return i
+    }
+  }
+  return 0
+}
+
+function getMaxAmp(array) {
+  let maxAmp = 1
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    if (maxAmp < array[i]) {
+      maxAmp = array[i]
+    }
+  }
+  return maxAmp
+}
+
+
 /**
  * Find peaks in an array with segments of increasing size.
  *
@@ -276,7 +301,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
         this.plot(
           this.viewPortRight - width,
-          this.yFromIndex(this.f[0]),
+          this.yFromIndex(this.f[0].index),
           this.formantColors[0],
           width,
           2,
@@ -360,7 +385,7 @@ class Spectrogram { // eslint-disable-line no-unused-vars
     if (this.track.fundamentalAmp > this.track.fundamentalMinAmp) {
       this.plot(
         this.viewPortRight - width,
-        this.yFromIndex(this.f[0]),
+        this.yFromIndex(this.f[0].index),
         this.formantColors[0],
         width,
         8,
@@ -532,7 +557,8 @@ class Spectrogram { // eslint-disable-line no-unused-vars
       } else if (currentPeakIndex > 0) {
         currentPeakIndex = getMoreAccurateFundamental(array, currentPeakIndex);
         if (currentPeakAmplitude > this.track.fundamentalMinAmp) {
-          this.f[0] = Math.max(currentPeakIndex, 1);
+          this.f[0].index = Math.max(currentPeakIndex, 1);
+          this.f[0].amp = currentPeakAmplitude;
         }
         this.track.fundamentalAmp = currentPeakAmplitude;
         return { index: Math.max(currentPeakIndex, 1), amp: currentPeakAmplitude };

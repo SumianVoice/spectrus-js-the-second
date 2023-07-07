@@ -16,6 +16,8 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.alertSound = new Audio('audio/alert.mp3');
     this.notationType = 'musical';
     this.show_cursor_harmonics = false;
+    this.lastAvgWelit = 1;
+    this.show_vfvm = false;
   }
 
   get canvas() {
@@ -178,30 +180,30 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   trackPitch() { // eslint-disable-line consistent-return
     this.spec.update();
-    if (!(this.spec.f[0] > 0)) { return; }
+    if (!(this.spec.f[0].index > 0)) { return; }
     let tmpColor = '#ffff4480';
     if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
       tmpColor = '#22ff55';
     }
-    const F0hz = Math.floor(this.spec.hzFromIndex(this.spec.f[0]));
+    const F0hz = Math.floor(this.spec.hzFromIndex(this.spec.f[0].index));
     this.ctx.fillStyle = '#111';
     this.ctx.fillRect(
       this.spec.viewPortRight,
-      this.spec.yFromIndex(this.spec.f[0]) - 1,
+      this.spec.yFromIndex(this.spec.f[0].index) - 1,
       20,
       2 + 2,
     );
     this.ctx.fillStyle = tmpColor;
     this.ctx.fillRect(
       this.spec.viewPortRight,
-      this.spec.yFromIndex(this.spec.f[0]),
+      this.spec.yFromIndex(this.spec.f[0].index),
       20,
       2,
     );
     this.renderText(
-      `${Math.floor(this.spec.hzFromIndex(this.spec.f[0]))}Hz`,
+      `${Math.floor(this.spec.hzFromIndex(this.spec.f[0].index))}Hz`,
       this.spec.viewPortRight + 20,
-      this.spec.yFromIndex(this.spec.f[0]) + 5,
+      this.spec.yFromIndex(this.spec.f[0].index) + 5,
       tmpColor,
       '20px',
       'Mono',
@@ -228,6 +230,89 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   harmonicstoggle() {
     this.show_cursor_harmonics = !this.show_cursor_harmonics;
   }
+  vfvmtoggle() {
+    this.show_vfvm = !this.show_vfvm;
+  }
+
+  get_welit() {
+    this.ctx.fillStyle = "#22222290";
+    this.ctx.fillRect(
+      100 - 10,
+      this.viewPortBottom - 100 - 30,
+      1200,
+      100,
+    );
+    this.renderText(
+      `WARNING! Not only is this analysis of vibratory fold mass INACCURATE, even if it were accurate `,
+      100,
+      this.spec.viewPortBottom - 100,
+      "#ffffaa",
+      '20px',
+      'Mono',
+    );
+    this.renderText(
+      ` basing practice off it is probably useless. Trust your ears, get critique from people.`,
+      100,
+      this.spec.viewPortBottom - 80,
+      "#ffffaa",
+      '20px',
+      'Mono',
+    );
+    this.renderText(
+      `It is based on no empirical data or research and is entirely guesswork.`,
+      100,
+      this.spec.viewPortBottom - 60,
+      "#ffffaa",
+      '20px',
+      'Mono',
+    );
+    this.renderText(
+      `Approx VFVM`,
+      this.viewPortRight - 500 + 10,
+      this.spec.viewPortBottom - 10,
+      "#fff",
+      '20px',
+      'Mono',
+    );
+
+    let fundamental = this.audioSystem.spec.track.fundamentalAmp;
+    if ((!fundamental) || fundamental < 100) { return; }
+    let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10);
+    let f0index = (audioSystem.spec.f[0].index);
+    let maxamp = getMaxAmp(this.audioSystem.fft.data);
+
+    if (f0index < 1) {
+      f0index = 1;
+    }
+    if (maxindex < 1) {
+      maxindex = f0index;
+    }
+    let dist = maxindex - f0index;
+
+    let fundamentalRelative = (fundamental / maxamp) ^ 2;
+
+    let approxmass = (dist / (f0index / 80)) / fundamentalRelative;
+    this.lastAvgWelit = (this.lastAvgWelit * 49 + approxmass) / 50;
+
+    let height = (this.lastAvgWelit) / 1000 * this.spec.viewPortBottom;
+
+    this.renderText(
+      `${Math.ceil(this.lastAvgWelit)} rolloff`,
+      100,
+      this.spec.viewPortBottom - 10,
+      "#fff",
+      '20px',
+      'Mono',
+    );
+
+    this.ctx.fillStyle = "#ffffff90";
+    this.ctx.fillRect(
+      this.viewPortRight - 500,
+      this.viewPortBottom - height*0.5,
+      60,
+      height,
+    );
+  }
 
   update() {
     this.updateScale();
@@ -244,5 +329,9 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       }
     }
     this.trackPitch();
+
+    if (this.show_vfvm) {
+      this.get_welit();
+    }
   }
 }
