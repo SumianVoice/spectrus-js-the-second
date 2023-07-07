@@ -2,12 +2,7 @@
   "name": "spectrus-js-the-second",
   "version": "1.0.0",
   "description": "A hopefully less jank spectrogram",
-  "scripts": {
-    "lint:js": "eslint js/",
-    "fixlint:js": "eslint --fix js/",
-    "lint": "npm run lint:js",
-    "fixlint": "npm run fixlint:js"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SumianVoice/spectrus-js-the-second.git"
@@ -19,11 +14,7 @@
     "url": "https://github.com/SumianVoice/spectrus-js-the-second/issues"
   },
   "homepage": "https://github.com/SumianVoice/spectrus-js-the-second#readme",
-  "dependencies": {
-    "eslint": "^8.18.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.26.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "jsdoc": "^4.0.0"
   }
