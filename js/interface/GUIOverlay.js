@@ -278,9 +278,9 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
     const fundamental = this.audioSystem.spec.track.fundamentalAmp;
     if ((!fundamental) || fundamental < 100) { return; }
-    let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10);
+    let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10); // eslint-disable-line no-undef
     let f0index = (audioSystem.spec.f[0].index);
-    let maxamp = getMaxAmp(this.audioSystem.fft.data);
+    const maxamp = getMaxAmp(this.audioSystem.fft.data); // eslint-disable-line no-undef
 
     if (f0index < 1) {
       f0index = 1;
@@ -288,14 +288,14 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     if (maxindex < 1) {
       maxindex = f0index;
     }
-    let dist = maxindex - f0index;
+    const dist = maxindex - f0index;
 
-    let fundamentalRelative = (fundamental / maxamp) ^ 2;
+    const fundamentalRelative = (fundamental / maxamp) ** 2;
 
-    let approxmass = (dist / (f0index / 80)) / fundamentalRelative;
+    const approxmass = (dist / (f0index / 20)) / fundamentalRelative;
     this.lastAvgWelit = (this.lastAvgWelit * 49 + approxmass) / 50;
 
-    let height = (this.lastAvgWelit) / 1000 * this.spec.viewPortBottom;
+    const height = ((this.lastAvgWelit) / 1000) * this.spec.viewPortBottom;
 
     this.renderText(
       `${Math.ceil(this.lastAvgWelit)} rolloff`,
@@ -309,7 +309,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx.fillStyle = '#ffffff90';
     this.ctx.fillRect(
       this.viewPortRight - 500,
-      this.viewPortBottom - height*0.5,
+      this.viewPortBottom - height * 0.5,
       60,
       height,
     );
