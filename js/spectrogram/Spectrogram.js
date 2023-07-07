@@ -57,9 +57,8 @@ function movingAverage(array, span, maxIndex = 1000) {
 }
 
 function getMaxIndexOverVolume(array, volume = 50) { // eslint-disable-line no-unused-vars
-  let maxIndex = 1000;
-  let avgs = movingAverage(array, 100, 1000);
-  let rolloff = 0;
+  const maxIndex = 1000;
+  const avgs = movingAverage(array, 100, 1000);
 
   for (let i = Math.min(avgs.length, maxIndex) - 1; i >= 0; i--) {
     if (avgs[i] > volume) {

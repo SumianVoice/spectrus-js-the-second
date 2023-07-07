@@ -244,7 +244,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       100,
     );
     this.renderText(
-      `WARNING! Not only is this analysis of vibratory fold mass INACCURATE, even if it were accurate `,
+      'WARNING! Not only is this analysis of vibratory fold mass INACCURATE, even if it were accurate ',
       100,
       this.spec.viewPortBottom - 100,
       '#ffffaa',
@@ -252,7 +252,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       'Mono',
     );
     this.renderText(
-      ` basing practice off it is probably useless. Trust your ears, get critique from people.`,
+      ' basing practice off it is probably useless. Trust your ears, get critique from people.',
       100,
       this.spec.viewPortBottom - 80,
       '#ffffaa',
@@ -260,7 +260,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       'Mono',
     );
     this.renderText(
-      `It is based on no empirical data or research and is entirely guesswork.`,
+      'It is based on no empirical data or research and is entirely guesswork.',
       100,
       this.spec.viewPortBottom - 60,
       '#ffffaa',
@@ -268,7 +268,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       'Mono',
     );
     this.renderText(
-      `Approx VFVM`,
+      'Approx VFVM',
       this.viewPortRight - 500 + 10,
       this.spec.viewPortBottom - 10,
       '#fff',
@@ -278,9 +278,11 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
     const fundamental = this.audioSystem.spec.track.fundamentalAmp;
     if ((!fundamental) || fundamental < 100) { return; }
-    let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10); // eslint-disable-line no-undef
+    // eslint-disable-line no-undef
+    let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10);
     let f0index = (audioSystem.spec.f[0].index);
-    const maxamp = getMaxAmp(this.audioSystem.fft.data); // eslint-disable-line no-undef
+    // eslint-disable-line no-undef
+    const maxamp = getMaxAmp(this.audioSystem.fft.data);
 
     if (f0index < 1) {
       f0index = 1;
