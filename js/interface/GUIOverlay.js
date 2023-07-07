@@ -163,9 +163,9 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       // show the hz of that note
       const notehz = getNoteHz(tmpNote, this.notationType);
       // let notey = this.spec.yFromHz(notehz)
-      // this.ctx.fillStyle = "#11111144";
+      // this.ctx.fillStyle = '#11111144';
       // this.ctx.fillRect(x - 50 - 1, notey - 1, 14, 4);
-      // this.ctx.fillStyle = "#66aaff";
+      // this.ctx.fillStyle = '#66aaff';
       // this.ctx.fillRect(x - 50 + 1, notey, 10, 2);
       this.renderText(
         `${Math.round(notehz)}Hz`,
@@ -230,12 +230,13 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   harmonicstoggle() {
     this.show_cursor_harmonics = !this.show_cursor_harmonics;
   }
+
   vfvmtoggle() {
     this.show_vfvm = !this.show_vfvm;
   }
 
   get_welit() {
-    this.ctx.fillStyle = "#22222290";
+    this.ctx.fillStyle = '#22222290';
     this.ctx.fillRect(
       100 - 10,
       this.viewPortBottom - 100 - 30,
@@ -246,7 +247,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       `WARNING! Not only is this analysis of vibratory fold mass INACCURATE, even if it were accurate `,
       100,
       this.spec.viewPortBottom - 100,
-      "#ffffaa",
+      '#ffffaa',
       '20px',
       'Mono',
     );
@@ -254,7 +255,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       ` basing practice off it is probably useless. Trust your ears, get critique from people.`,
       100,
       this.spec.viewPortBottom - 80,
-      "#ffffaa",
+      '#ffffaa',
       '20px',
       'Mono',
     );
@@ -262,7 +263,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       `It is based on no empirical data or research and is entirely guesswork.`,
       100,
       this.spec.viewPortBottom - 60,
-      "#ffffaa",
+      '#ffffaa',
       '20px',
       'Mono',
     );
@@ -270,12 +271,12 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       `Approx VFVM`,
       this.viewPortRight - 500 + 10,
       this.spec.viewPortBottom - 10,
-      "#fff",
+      '#fff',
       '20px',
       'Mono',
     );
 
-    let fundamental = this.audioSystem.spec.track.fundamentalAmp;
+    const fundamental = this.audioSystem.spec.track.fundamentalAmp;
     if ((!fundamental) || fundamental < 100) { return; }
     let maxindex = getMaxIndexOverVolume(this.audioSystem.fft.data, 10);
     let f0index = (audioSystem.spec.f[0].index);
@@ -300,12 +301,12 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       `${Math.ceil(this.lastAvgWelit)} rolloff`,
       100,
       this.spec.viewPortBottom - 10,
-      "#fff",
+      '#fff',
       '20px',
       'Mono',
     );
 
-    this.ctx.fillStyle = "#ffffff90";
+    this.ctx.fillStyle = '#ffffff90';
     this.ctx.fillRect(
       this.viewPortRight - 500,
       this.viewPortBottom - height*0.5,
