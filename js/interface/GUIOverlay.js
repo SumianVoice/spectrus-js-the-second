@@ -299,15 +299,6 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
     const height = ((this.lastAvgWelit) / 1000) * this.spec.viewPortBottom;
 
-    this.renderText(
-      `${Math.ceil(this.lastAvgWelit)} rolloff`,
-      100,
-      this.spec.viewPortBottom - 10,
-      '#fff',
-      '20px',
-      'Mono',
-    );
-
     this.ctx.fillStyle = '#ffffff90';
     this.ctx.fillRect(
       this.viewPortRight - 500,
