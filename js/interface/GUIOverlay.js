@@ -18,6 +18,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.show_cursor_harmonics = false;
     this.lastAvgWelit = 1;
     this.show_vfvm = false;
+    this.vfvm_avg_window = 50;
   }
 
   get canvas() {
@@ -29,7 +30,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
   }
 
   pitchAlertTest() {
-    const fundamentalHz = this.audioSystem.spec.hzFromIndex(this.audioSystem.spec.f[0]);
+    const fundamentalHz = this.audioSystem.spec.hzFromIndex(this.audioSystem.spec.f[0].index);
     if (this.audioSystem.spec.track.fundamentalAmp
     < this.audioSystem.spec.track.fundamentalMinAmp) { return; }
     this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
@@ -295,7 +296,7 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     const fundamentalRelative = (fundamental / maxamp) ** 2;
 
     const approxmass = (dist / (f0index / 20)) / fundamentalRelative;
-    this.lastAvgWelit = (this.lastAvgWelit * 49 + approxmass) / 50;
+    this.lastAvgWelit = (this.lastAvgWelit * (this.vfvm_avg_window - 1) + approxmass) / this.vfvm_avg_window;
 
     const height = ((this.lastAvgWelit) / 1000) * this.spec.viewPortBottom;
 
