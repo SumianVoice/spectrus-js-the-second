@@ -179,32 +179,58 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     }
   }
 
+  // allows collating some data in a string and array to print later
+  dataCollect(data) {
+    if (!this.is_collecting_data) {return;}
+    if (this.data_glob == null) {
+      this.data_glob = [];
+      this.data_str = "";
+    }
+    var dt = (Date.now() - this.data_collect_time_start) / 1000;
+    this.data_glob.push([dt, data]);
+    this.data_str = this.data_str + String(dt) + "	" + String(data) + "\n";
+  }
+
+  dataCollectStart() {
+    this.is_collecting_data = true;
+    this.data_collect_time_start = Date.now();
+    this.data_glob = [];
+    this.data_str = "";
+  }
+
+  dataCollectStop() {
+    this.is_collecting_data = false;
+    console.log(this.data_glob)
+    console.log(this.data_str)
+  }
+
   trackPitch() { // eslint-disable-line consistent-return
     this.spec.update();
-    if (!(this.spec.f[0].index > 0)) { return; }
+    let F0 = this.spec.f[0];
+    if (!(F0.index > 0)) { return; }
     let tmpColor = '#ffff4480';
     if (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp) {
       tmpColor = '#22ff55';
     }
-    const F0hz = Math.floor(this.spec.hzFromIndex(this.spec.f[0].index));
+    const F0hz = Math.floor(this.spec.hzFromIndex(F0.index));
     this.ctx.fillStyle = '#111';
     this.ctx.fillRect(
       this.spec.viewPortRight,
-      this.spec.yFromIndex(this.spec.f[0].index) - 1,
+      this.spec.yFromIndex(F0.index) - 1,
       20,
       2 + 2,
     );
     this.ctx.fillStyle = tmpColor;
     this.ctx.fillRect(
       this.spec.viewPortRight,
-      this.spec.yFromIndex(this.spec.f[0].index),
+      this.spec.yFromIndex(F0.index),
       20,
       2,
     );
     this.renderText(
-      `${Math.floor(this.spec.hzFromIndex(this.spec.f[0].index))}Hz`,
+      `${Math.floor(this.spec.hzFromIndex(F0.index))}Hz`,
       this.spec.viewPortRight + 20,
-      this.spec.yFromIndex(this.spec.f[0].index) + 5,
+      this.spec.yFromIndex(F0.index) + 5,
       tmpColor,
       '20px',
       'Mono',
@@ -324,6 +350,15 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
       }
     }
     this.trackPitch();
+
+    // collect pitch over time data for charts and such, if the button is pressed
+    if (this.is_collecting_data && (this.spec.track.fundamentalAmp > this.spec.track.fundamentalMinAmp)) {
+      var F0 = this.spec.hzFromIndex(this.spec.f[0].index);
+      var ex = 10;
+      if (this.running_avg_fundamental == null) {this.running_avg_fundamental = F0;}
+      this.running_avg_fundamental = (this.running_avg_fundamental * (ex-1) +  F0) / ex;
+      this.dataCollect(Math.round(this.running_avg_fundamental));
+    }
 
     if (this.show_vfvm) {
       this.get_welit();
