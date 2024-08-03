@@ -11,8 +11,10 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
     this.ctx = this.canvas.getContext('2d');
     this.mouse = new MouseListener(this.mouseDown.bind(this), this.mouseUp.bind(this));
     this.ruler = [{ x: 0, y: 0, active: false }];
-    this.pitchFloorAlert = document.querySelector('#pitchFloorAlert');
-    this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
+    this.pitchAlertFloorElem = document.querySelector('#pitchFloorAlert');
+    this.pitchAlertCeilingElem = document.querySelector('#pitchCeilingAlert');
+    this.pitchAlertFloor = parseInt(this.pitchAlertFloorElem.value, 10);
+    this.pitchAlertCeiling = parseInt(this.pitchAlertCeilingElem.value, 10);
     this.alertSound = new Audio('audio/alert.mp3');
     this.notationType = 'musical';
     this.show_cursor_harmonics = false;
@@ -31,10 +33,32 @@ class GUIOverlay { // eslint-disable-line no-unused-vars
 
   pitchAlertTest() {
     const fundamentalHz = this.audioSystem.spec.hzFromIndex(this.audioSystem.spec.f[0].index);
+    this.pitchAlertFloor = parseInt(this.pitchAlertFloorElem.value, 10);
+    this.pitchAlertCeiling = parseInt(this.pitchAlertCeilingElem.value, 10);
+
+    if (this.pitchAlertFloor !== 0 || this.pitchAlertCeiling !== 0) {
+      this.renderText(
+        'WARNING! Never force a voice to stay within',
+        100, this.spec.viewPortBottom - 28,
+        '#ffffaa80', '14px', 'Mono',
+      );
+      this.renderText(
+        'a pitch range if it is even slightly uncomfortable.',
+        100, this.spec.viewPortBottom - 12,
+        '#ffffaa80', '14px', 'Mono',
+      );
+    }
+
     if (this.audioSystem.spec.track.fundamentalAmp
     < this.audioSystem.spec.track.fundamentalMinAmp) { return; }
-    this.pitchAlert = parseInt(this.pitchFloorAlert.value, 10);
-    if (fundamentalHz < this.pitchAlert) {
+
+    if (fundamentalHz < this.pitchAlertFloor) {
+      if ((!this.alertSound.duration > 0 || this.alertSound.paused)) {
+        this.alertSound.play();
+        this.alertSound.currentTime = 0;
+      }
+    } else if (this.pitchAlertCeiling !== 0 && fundamentalHz > this.pitchAlertCeiling
+      && fundamentalHz < 1000) {
       if ((!this.alertSound.duration > 0 || this.alertSound.paused)) {
         this.alertSound.play();
         this.alertSound.currentTime = 0;

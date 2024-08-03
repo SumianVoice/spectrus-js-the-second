@@ -48,7 +48,7 @@ button, input {
   margin: 5px;
   /* min-width: 60px; */
   width: 90px;
-  min-height: 30px;
+  min-height: 20px;
   margin-right: auto;
   color: #fff;
   /* font-weight: bold; */
@@ -65,4 +65,13 @@ button:active {
 
 input {
   width: 80px;
+}
+
+.tooltip {
+  color: #ffeeaa30;
+  width: auto;
+  height: 0;
+  overflow: visible;
+  position:fixed;
+  transform: translate(100px, -45px);
 }

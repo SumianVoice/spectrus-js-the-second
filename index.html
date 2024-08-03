@@ -24,7 +24,14 @@
         <button type="button" name="button" onclick="audioSystem.spec.trackFormantToggle();" id="trackFormantToggle">formant tracking</button>
         <button type="button" name="button" onclick="audioSystem.spec.scaleModeToggle();" id="scaleModeToggle">scale<br>mode</button>
         <div class="">
-          <input id="pitchFloorAlert" type="number" name="" value="0" title="minimum pitch alert">
+          <span>
+            <input id="pitchCeilingAlert" type="number" name="" value="0" title="maximum pitch alert; 0 to disable">
+            <p class="tooltip">alert max pitch</p>
+          </span>
+          <span>
+            <input id="pitchFloorAlert" type="number" name="" value="0" title="minimum pitch alert; 0 to disable">
+            <p class="tooltip">alert minimum pitch</p>
+          </span>
         </div>
         <button type="button" name="button" onclick="audioSystem.spec.notationToggle();" id="notationToggle">experimental notation</button>
         <button type="button" name="button" onclick="audioSystem.gui.harmonicstoggle();" id="harmonicstoggle">show harmonics</button>
